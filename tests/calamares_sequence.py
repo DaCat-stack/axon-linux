@@ -5,7 +5,7 @@ import sys
 SHOW1 = ["welcome", "locale", "keyboard", "partition", "users", "summary"]
 EXEC = ["partition", "mount", "unpackfs", "machineid", "fstab", "locale", "keyboard", "localecfg",
         "users", "displaymanager", "networkcfg", "hwclock", "services-systemd", "shellprocess@cleanup",
-        "initcpiocfg", "initcpio", "grubcfg", "bootloader", "umount"]
+        "initcpiocfg", "shellprocess@snapshots", "initcpio", "grubcfg", "bootloader", "umount"]
 SHOW2 = ["finished"]
 
 text = open(sys.argv[1]).read()

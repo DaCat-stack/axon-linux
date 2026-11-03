@@ -135,6 +135,13 @@ done
 check "calamares: ярлык в live" test -s $AIR/etc/skel/Desktop/axon-install.desktop
 for p in calamares grub os-prober efibootmgr ntfs-3g; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
 
+# --- btrfs и снимки ---
+check "снимки: тест скрипта" tests/test_snapshots.sh
+check "установщик: btrfs по умолчанию" yaml_has $CA/modules/partition.conf '^defaultFileSystemType: *"btrfs"'
+for sv in "/@" "/@home" "/@cache" "/@log" "/@snapshots"; do check "подтом $sv" yaml_has $CA/modules/mount.conf "subvolume: *$sv\$"; done
+check "снимки: шаг Calamares" has $CA/modules/shellprocess-snapshots.conf "snapshots.sh"
+for p in snapper snap-pac grub-btrfs inotify-tools btrfs-progs; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
+
 # --- исправления после ревью ---
 CL=$AIR/usr/share/axon/target/cleanup.sh
 check "fix1: unpackfs не зависит от флешки (copytoram)" sh -c "! grep -q bootmnt $CA/modules/unpackfs.conf"

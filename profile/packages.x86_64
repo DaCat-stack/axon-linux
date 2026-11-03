@@ -85,3 +85,10 @@ ntfs-3g
 axon-keyring
 axon-branding
 axon-welcome
+
+# --- Снимки и откат (btrfs) ---
+btrfs-progs
+snapper
+snap-pac
+grub-btrfs
+inotify-tools

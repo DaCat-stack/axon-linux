@@ -20,7 +20,7 @@ concurrency:
 
 env:
   BASE: https://dacat-stack.github.io/axon-repo
-  PKGS: axon-keyring axon-branding axon-welcome
+  PKGS: axon-keyring axon-branding axon-welcome axon-desktop
 
 jobs:
   publish:

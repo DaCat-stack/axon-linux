@@ -181,6 +181,9 @@ check "ISO: в pacman.conf установленной системы есть [a
 check "ISO: [axon] только с подписью" has build.sh "SigLevel = Required DatabaseRequired"
 check "live: ключ AXON при старте" has $AIR/etc/systemd/system/pacman-init.service.d/axon.conf "pacman-key --populate axon"
 check "установка: ключ AXON в связке" has $AIR/usr/share/axon/target/cleanup.sh "pacman-key --populate archlinux axon"
+check "комплект axon-desktop тянет все части" sh -c 'grep -q "axon-branding" packages/axon-desktop/PKGBUILD && grep -q "axon-welcome" packages/axon-desktop/PKGBUILD && grep -q "axon-keyring" packages/axon-desktop/PKGBUILD'
+check "в ISO стоит комплект axon-desktop" grep -qx axon-desktop profile/packages.x86_64
+check "e2e проверяет комплект" has .github/workflows/packages.yml "axon-desktop"
 check "ci/build-packages.sh существует" test -x ci/build-packages.sh
 check "build.sh собирает пакеты AXON" has build.sh "build-packages.sh"
 

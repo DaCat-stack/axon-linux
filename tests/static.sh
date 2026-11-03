@@ -143,6 +143,17 @@ check "fix5: Binding не восстанавливает старое имя" te
 check "fix6: заставка KDE отключена системно" has $AIR/etc/xdg/ksplashrc "Engine=none"
 check "fix7: без GRUB_SAVEDEFAULT (btrfs)" sh -c "! grep -q SAVEDEFAULT $CA/modules/grubcfg.conf"
 
+# --- пакеты AXON ---
+pkgbuild_ok() {  # pkgbuild_ok <PKGBUILD>
+    bash -n "$1" && (source "$1" && [[ "$pkgname" == axon-* ]] && [[ " ${arch[*]} " =~ \ (any|x86_64)\  ]])
+}
+check "есть пакет axon-keyring" test -s packages/axon-keyring/PKGBUILD
+for pb in packages/*/PKGBUILD; do
+    [ -e "$pb" ] && check "PKGBUILD ${pb#packages/}" pkgbuild_ok "$pb"
+done
+check "ci/build-packages.sh существует" test -x ci/build-packages.sh
+check "build.sh собирает пакеты AXON" has build.sh "build-packages.sh"
+
 # --- права: mkarchiso копирует airootfs без прав, исполняемые файлы надо перечислить ---
 while IFS= read -r f; do
     check "права в profiledef: ${f#$AIR}" grep -qF "[\"${f#$AIR}\"]=\"0:0:755\"" build.sh

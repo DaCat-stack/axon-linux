@@ -26,6 +26,8 @@ cp "$PROFILE/pacman.conf" "$PROFILE/airootfs/etc/pacman.conf"
 # --- Пакеты из AUR (Calamares) — локальный репозиторий только для сборки ---
 LOCAL_REPO=/tmp/axon-repo
 "$ROOT/ci/build-aur.sh" "$LOCAL_REPO"
+"$ROOT/ci/build-packages.sh" "$LOCAL_REPO"
+repo-add "$LOCAL_REPO/axon-local.db.tar.gz" "$LOCAL_REPO"/axon-*.pkg.tar.zst
 if [ -f "$LOCAL_REPO/axon-local.db.tar.gz" ]; then
     awk -v repo="$LOCAL_REPO" '!done && /^\[core\]/ {
             print "[axon-local]\nSigLevel = Optional TrustAll\nServer = file://" repo "\n"; done=1 }

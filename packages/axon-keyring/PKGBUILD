@@ -1,0 +1,16 @@
+# AXON Linux: ключ подписи пакетов AXON для pacman
+pkgname=axon-keyring
+pkgver=1
+pkgrel=1
+pkgdesc="Ключ подписи пакетов AXON Linux"
+arch=('any')
+url="https://axon-project.ru"
+license=('GPL-3.0-or-later')
+install=axon-keyring.install
+
+package() {
+    local src="$startdir"
+    install -Dm644 "$src/axon.gpg" "$pkgdir/usr/share/pacman/keyrings/axon.gpg"
+    install -Dm644 "$src/axon-trusted" "$pkgdir/usr/share/pacman/keyrings/axon-trusted"
+    install -Dm644 /dev/null "$pkgdir/usr/share/pacman/keyrings/axon-revoked"
+}

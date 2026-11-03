@@ -68,3 +68,7 @@ inter-font
 
 # --- Анимация загрузки ---
 plymouth
+
+# --- Оформление ---
+papirus-icon-theme
+discord

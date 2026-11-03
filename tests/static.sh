@@ -76,4 +76,23 @@ check "sddm: раскладка в верхней панели" has $ST/TopBar.q
 check "sddm: тема включена" has $AIR/etc/sddm.conf.d/axon.conf "Current=axon"
 check "sddm: шрифт Inter" grep -qx inter-font profile/packages.x86_64
 
+# --- пресеты рабочего стола ---
+LNF=$AIR/usr/share/plasma/look-and-feel
+for v in a b c; do
+    P=$LNF/org.axon.desktop.$v
+    check "пресет $v: metadata.json" json_id $P/metadata.json org.axon.desktop.$v
+    check "пресет $v: defaults" has $P/contents/defaults "ColorScheme=BreezeDark"
+    check "пресет $v: превью" test -s $P/contents/previews/preview.png
+    check "пресет $v: layout JS синтаксис" node --check $P/contents/layouts/org.kde.plasma.desktop-layout.js
+    check "пресет $v: обои AXON" has $P/contents/layouts/org.kde.plasma.desktop-layout.js "/usr/share/wallpapers/AXON"
+done
+check "пресет a: меню kickoff" has $LNF/org.axon.desktop.a/contents/layouts/org.kde.plasma.desktop-layout.js "org.kde.plasma.kickoff"
+check "пресет a: плавающая панель" has $LNF/org.axon.desktop.a/contents/layouts/org.kde.plasma.desktop-layout.js "floating"
+check "пресет b: глобальное меню" has $LNF/org.axon.desktop.b/contents/layouts/org.kde.plasma.desktop-layout.js "org.kde.plasma.appmenu"
+check "пресет c: док слева" has $LNF/org.axon.desktop.c/contents/layouts/org.kde.plasma.desktop-layout.js '"left"'
+check "по умолчанию пресет A" has $AIR/etc/xdg/kdeglobals "LookAndFeelPackage=org.axon.desktop.a"
+check "иконки Papirus-Dark" has $AIR/etc/xdg/kdeglobals "Theme=Papirus-Dark"
+check "лого в pixmaps" test -s $AIR/usr/share/pixmaps/axon-logo.png
+for p in papirus-icon-theme discord; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
+
 exit "$FAILED"

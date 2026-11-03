@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Id": "org.axon.desktop.a",
+        "Name": "AXON — как Windows 11",
+        "Description": "Плавающая панель по центру снизу, трей и часы справа",
+        "Authors": [
+            {
+                "Name": "AXON"
+            }
+        ],
+        "License": "GPL-2.0-or-later",
+        "Version": "1.0"
+    },
+    "X-Plasma-APIVersion": "2"
+}

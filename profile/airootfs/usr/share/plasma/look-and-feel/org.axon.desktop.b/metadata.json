@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Id": "org.axon.desktop.b",
+        "Name": "AXON — как на маке",
+        "Description": "Верхняя полоска с меню и часами, док снизу",
+        "Authors": [
+            {
+                "Name": "AXON"
+            }
+        ],
+        "License": "GPL-2.0-or-later",
+        "Version": "1.0"
+    },
+    "X-Plasma-APIVersion": "2"
+}

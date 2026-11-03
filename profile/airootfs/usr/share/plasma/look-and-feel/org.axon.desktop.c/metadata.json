@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Id": "org.axon.desktop.c",
+        "Name": "AXON — как в Ubuntu",
+        "Description": "Тёмная верхняя панель, док слева",
+        "Authors": [
+            {
+                "Name": "AXON"
+            }
+        ],
+        "License": "GPL-2.0-or-later",
+        "Version": "1.0"
+    },
+    "X-Plasma-APIVersion": "2"
+}

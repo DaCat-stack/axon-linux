@@ -47,7 +47,7 @@ jobs:
 
       - name: Загрузить ISO в QEMU и снять экран
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq qemu-system-x86 imagemagick
+          sudo apt-get update -qq && sudo apt-get install -y -qq qemu-system-x86 imagemagick ovmf
           sudo chmod 666 /dev/kvm || true
           ci/smoke-qemu.sh out/*.iso screens
 

@@ -8,7 +8,7 @@ PROFILE=/tmp/axon-profile
 WORK=/tmp/axon-work
 OUT="$ROOT/out"
 
-pacman -Syu --noconfirm --needed archiso
+pacman -Syu --noconfirm --needed archiso grub
 
 rm -rf "$PROFILE" "$WORK"
 cp -r /usr/share/archiso/configs/releng "$PROFILE"
@@ -54,7 +54,21 @@ for f in "$PROFILE"/syslinux/*.cfg "$PROFILE"/grub/*.cfg "$PROFILE"/efiboot/load
     sed -i '/archisobasedir=/{/accessibility/!s/$/ quiet splash/}' "$f"
 done
 
-# --- Брендинг ---
+# --- Меню флешки: в UEFI вместо текстового systemd-boot — GRUB с темой AXON ---
+sed -i 's/uefi.systemd-boot/uefi.grub/' "$PROFILE/profiledef.sh"
+grep -q "uefi.grub" "$PROFILE/profiledef.sh"
+# тема (картинки + шрифты .pf2) — из только что собранного пакета axon-branding;
+# mkarchiso кладёт всё из $PROFILE/grub/ (кроме .cfg) в /boot/grub/ на ISO
+mkdir -p /tmp/axon-branding-pkg
+bsdtar -xf "$(ls "$LOCAL_REPO"/axon-branding-*.pkg.tar.zst | head -1)" -C /tmp/axon-branding-pkg usr/share/grub/themes/axon
+mkdir -p "$PROFILE/grub/themes"
+cp -r /tmp/axon-branding-pkg/usr/share/grub/themes/axon "$PROFILE/grub/themes/axon"
+# у пунктов меню флешки класс arch, у прошивки — uefi-firmware: те же иконки
+cp "$PROFILE/grub/themes/axon/icons/axon.png" "$PROFILE/grub/themes/axon/icons/arch.png"
+cp "$PROFILE/grub/themes/axon/icons/efi.png" "$PROFILE/grub/themes/axon/icons/uefi-firmware.png"
+# графический режим + тема (в releng там «terminal_output console»)
+"$ROOT/ci/grub-theme-cfg.sh" "$PROFILE/grub/grub.cfg"
+
 sed -i \
     -e 's|^iso_name=.*|iso_name="axon"|' \
     -e 's|^iso_label=.*|iso_label="AXON_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"|' \

@@ -158,6 +158,13 @@ check "grub: тема включена в установленной систе�
 check "grub: графический режим (не console)" sh -c "! grep -q 'GRUB_TERMINAL_OUTPUT: *\"console\"' $CA/modules/grubcfg.conf"
 check "grub: снимки в меню по-русски" has $AIR/usr/share/axon/target/snapshots.sh "GRUB_BTRFS_SUBMENUNAME"
 
+# --- меню флешки: GRUB с темой AXON ---
+check "флешка: UEFI грузится через GRUB" has build.sh "uefi.systemd-boot/uefi.grub"
+check "флешка: тема берётся из пакета axon-branding" has build.sh "usr/share/grub/themes/axon"
+check "флешка: графический режим и тема в grub.cfg" has build.sh "grub-theme-cfg.sh"
+check "флешка: правка grub.cfg на настоящем releng" tests/test_grub_theme_cfg.sh
+check "CI: загрузка как с флешки (UEFI, диск, 8 ГБ)" has ci/smoke-qemu.sh "OVMF"
+
 # --- исправления после ревью ---
 CL=$AIR/usr/share/axon/target/cleanup.sh
 check "fix1: unpackfs не зависит от флешки (copytoram)" sh -c "! grep -q bootmnt $CA/modules/unpackfs.conf"

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Внутри контейнера archlinux: перенести прошедшие e2e пакеты из axon-testing в axon.
+# Использование: ci/publish-promote.sh <каталог сайта> <файл со списком имён пакетов>
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SITE="${1:?сайт}"; LIST="${2:?список}"
+pacman -Syu --noconfirm --needed sudo
+id builder >/dev/null 2>&1 || useradd -m builder
+sudo -u builder gpg --batch --pinentry-mode loopback --passphrase "$AXON_SIGN_PASS" --import <<<"$AXON_SIGN_SUBKEY"
+chown -R builder: "$SITE"
+files=()
+while read -r name; do
+    [ -n "$name" ] || continue
+    f=$(ls "$SITE"/axon-testing/x86_64/"$name"-[0-9]*.pkg.tar.zst | sort -V | tail -1)
+    files+=("$f")
+done < "$LIST"
+[ "${#files[@]}" -gt 0 ] || { echo "нечего переносить"; exit 0; }
+sudo -u builder env AXON_SIGN_PASS="$AXON_SIGN_PASS" "$ROOT/ci/repo-add-channel.sh" "$SITE" axon "${files[@]}"

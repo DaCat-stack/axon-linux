@@ -37,5 +37,5 @@ passwd -l root
 
 # --- ключи pacman (в live они были во временной памяти) ---
 pacman-key --init
-pacman-key --populate archlinux
+pacman-key --populate archlinux axon
 exit 0

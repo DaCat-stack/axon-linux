@@ -175,6 +175,12 @@ check "уведомление об обновлениях: тест" tests/test_
 check "уведомление: скрипт с правами 755" has packages/axon-branding/PKGBUILD "install -Dm755 .*usr/lib/axon/check-updates-age"
 check "уведомление: таймер включён для всех" has packages/axon-branding/PKGBUILD "timers.target.wants/axon-update-age.timer"
 check "уведомление: зависимость libnotify" has packages/axon-branding/PKGBUILD "libnotify"
+for f in ci/repo-add-channel.sh ci/publish-build.sh ci/publish-promote.sh ci/publish-deploy.sh ci/e2e-repo.sh; do check "$f исполняемый" test -x $f; done
+check "публикация: workflow пакетов" has .github/workflows/packages.yml "ci/e2e-repo.sh"
+check "ISO: в pacman.conf установленной системы есть [axon]" has build.sh "Server = https://dacat-stack.github.io/axon-repo/axon/"
+check "ISO: [axon] только с подписью" has build.sh "SigLevel = Required DatabaseRequired"
+check "live: ключ AXON при старте" has $AIR/etc/systemd/system/pacman-init.service.d/axon.conf "pacman-key --populate axon"
+check "установка: ключ AXON в связке" has $AIR/usr/share/axon/target/cleanup.sh "pacman-key --populate archlinux axon"
 check "ci/build-packages.sh существует" test -x ci/build-packages.sh
 check "build.sh собирает пакеты AXON" has build.sh "build-packages.sh"
 

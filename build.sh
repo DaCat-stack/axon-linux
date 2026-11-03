@@ -23,6 +23,13 @@ rm -rf "$PROFILE/airootfs/etc/systemd/system/getty@tty1.service.d"
 sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' "$PROFILE/pacman.conf"
 cp "$PROFILE/pacman.conf" "$PROFILE/airootfs/etc/pacman.conf"
 
+# --- Репозиторий AXON для live и установленной системы (только подписанные пакеты) ---
+awk '!done && /^\[core\]/ {
+        print "[axon]\nSigLevel = Required DatabaseRequired\nServer = https://dacat-stack.github.io/axon-repo/axon/$arch\n"; done=1 }
+    { print }' "$PROFILE/airootfs/etc/pacman.conf" > "$PROFILE/airootfs/etc/pacman.conf.new"
+mv "$PROFILE/airootfs/etc/pacman.conf.new" "$PROFILE/airootfs/etc/pacman.conf"
+grep -q '^\[axon\]' "$PROFILE/airootfs/etc/pacman.conf"
+
 # --- Пакеты из AUR (Calamares) — локальный репозиторий только для сборки ---
 LOCAL_REPO=/tmp/axon-repo
 "$ROOT/ci/build-aur.sh" "$LOCAL_REPO"

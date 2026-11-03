@@ -18,8 +18,8 @@ cp -r "$ROOT/packages" "$ROOT/pkgsrc" "$WORK/"
 chown -R builder: "$WORK"
 
 if [ "$SIGN" = "--sign" ]; then
-    : "${AXON_SIGN_SUBKEY:?нет секрета AXON_SIGN_SUBKEY}"
-    sudo -u builder gpg --batch --import <<<"$AXON_SIGN_SUBKEY"
+    : "${AXON_SIGN_SUBKEY:?нет секрета AXON_SIGN_SUBKEY}" "${AXON_SIGN_PASS:?нет секрета AXON_SIGN_PASS}"
+    sudo -u builder gpg --batch --pinentry-mode loopback --passphrase "$AXON_SIGN_PASS" --import <<<"$AXON_SIGN_SUBKEY"
 fi
 
 # версия пакета = время последнего коммита, где менялся сам пакет или его файлы (растёт с каждой правкой)
@@ -32,7 +32,7 @@ for dir in "$WORK"/packages/*/; do
     ver=$(TZ=UTC pkgver_for "$name"); ver=${ver:-0}
     (cd "$dir" && sudo -u builder env AXON_PKGVER="$ver" makepkg -d --noconfirm --cleanbuild)
     for pkg in "$dir"/*.pkg.tar.zst; do
-        [ "$SIGN" = "--sign" ] && sudo -u builder gpg --batch --yes --detach-sign --no-armor "$pkg"
+        [ "$SIGN" = "--sign" ] && sudo -u builder gpg --batch --yes --pinentry-mode loopback --passphrase "$AXON_SIGN_PASS" --detach-sign --no-armor "$pkg"
         cp "$pkg" "$OUT/"
         [ -f "$pkg.sig" ] && cp "$pkg.sig" "$OUT/"
     done

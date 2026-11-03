@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "profile/airootfs/usr/lib/axon-welcome"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "pkgsrc/axon-welcome/usr/lib/axon-welcome"))
 from axon_welcome import presets  # noqa: E402
 
 

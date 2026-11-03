@@ -4,7 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:?outdir}"
-THEME="$ROOT/profile/airootfs/usr/share/sddm/themes/axon"
+THEME="$ROOT/pkgsrc/axon-branding/usr/share/sddm/themes/axon"
 mkdir -p "$OUT"
 
 pacman -Syu --noconfirm --needed sddm qt6-declarative qt6-svg xorg-server-xvfb imagemagick inter-font xkeyboard-config

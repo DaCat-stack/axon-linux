@@ -56,7 +56,7 @@ sed -i \
     "$PROFILE/profiledef.sh"
 cat >> "$PROFILE/profiledef.sh" <<'EOF'
 file_permissions+=(["/etc/sudoers.d"]="0:0:750" ["/etc/sudoers.d/axon-live"]="0:0:440")
-file_permissions+=(["/usr/bin/axon-welcome"]="0:0:755" ["/usr/local/bin/axon-install"]="0:0:755")
+file_permissions+=(["/usr/local/bin/axon-install"]="0:0:755")
 file_permissions+=(["/usr/share/axon/target/cleanup.sh"]="0:0:755" ["/etc/skel/Desktop/axon-install.desktop"]="0:0:755")
 EOF
 grep -rl 'Arch Linux' "$PROFILE"/{syslinux,grub,efiboot} 2>/dev/null \

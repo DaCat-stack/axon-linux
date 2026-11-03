@@ -6,13 +6,15 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:?каталог}"; SIGN="${2:-}"
 mkdir -p "$OUT"
 
-pacman -S --noconfirm --needed base-devel
+pacman -S --noconfirm --needed base-devel git
+# зависимости пакетов AXON (Plasma, plymouth…) ставит mkarchiso, при сборке они не нужны: makepkg -d
+git config --global --add safe.directory "$ROOT"
 id builder >/dev/null 2>&1 || useradd -m builder
 echo 'builder ALL=(ALL) NOPASSWD: /usr/bin/pacman' > /etc/sudoers.d/builder
 
 WORK=/home/builder/axon-pkgs
 rm -rf "$WORK"; mkdir -p "$WORK"
-cp -r "$ROOT/packages" "$ROOT/pkgsrc" "$WORK/" 2>/dev/null || cp -r "$ROOT/packages" "$WORK/"
+cp -r "$ROOT/packages" "$ROOT/pkgsrc" "$WORK/"
 chown -R builder: "$WORK"
 
 if [ "$SIGN" = "--sign" ]; then
@@ -20,8 +22,15 @@ if [ "$SIGN" = "--sign" ]; then
     sudo -u builder gpg --batch --import <<<"$AXON_SIGN_SUBKEY"
 fi
 
+# версия пакета = время последнего коммита, где менялся сам пакет или его файлы (растёт с каждой правкой)
+pkgver_for() {
+    git -C "$ROOT" log -1 --format=%cd --date=format-local:%Y%m%d.%H%M%S -- "packages/$1" "pkgsrc/$1"
+}
+
 for dir in "$WORK"/packages/*/; do
-    (cd "$dir" && sudo -u builder makepkg -s --noconfirm --needed --cleanbuild)
+    name=$(basename "$dir")
+    ver=$(TZ=UTC pkgver_for "$name"); ver=${ver:-0}
+    (cd "$dir" && sudo -u builder env AXON_PKGVER="$ver" makepkg -d --noconfirm --cleanbuild)
     for pkg in "$dir"/*.pkg.tar.zst; do
         [ "$SIGN" = "--sign" ] && sudo -u builder gpg --batch --yes --detach-sign --no-armor "$pkg"
         cp "$pkg" "$OUT/"

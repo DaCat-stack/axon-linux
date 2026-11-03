@@ -30,6 +30,8 @@ jobs:
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # версия пакетов AXON считается по истории git
 
       - name: Статические проверки
         run: tests/static.sh

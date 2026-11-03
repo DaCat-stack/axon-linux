@@ -80,3 +80,8 @@ grub
 os-prober
 efibootmgr
 ntfs-3g
+
+# --- Пакеты AXON (собираются из packages/) ---
+axon-keyring
+axon-branding
+axon-welcome

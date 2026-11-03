@@ -1,6 +1,6 @@
 # AXON Linux: ключ подписи пакетов AXON для pacman
 pkgname=axon-keyring
-pkgver=1
+pkgver=${AXON_PKGVER:-0}
 pkgrel=1
 pkgdesc="Ключ подписи пакетов AXON Linux"
 arch=('any')

@@ -9,7 +9,7 @@ rm -f /etc/systemd/system/axon-live-user.service /etc/systemd/system/multi-user.
 rm -f /etc/skel/Desktop/axon-install.desktop /home/*/Desktop/axon-install.desktop
 rm -f /usr/share/applications/axon-install.desktop /usr/share/applications/calamares.desktop
 rm -f /usr/local/bin/axon-install
-cp "$T/sddm-axon.conf" /etc/sddm.conf.d/axon.conf          # тема остаётся, автовход — нет
+rm -f /etc/sddm.conf.d/zz-live.conf                       # автовход live; тема — в пакете axon-branding
 
 # --- ядро: archiso убирает его из /boot, берём из пакета linux ---
 set -- /usr/lib/modules/*/vmlinuz

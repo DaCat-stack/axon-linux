@@ -1,0 +1,17 @@
+# AXON Linux: оформление — обои, анимация загрузки, окно входа, пресеты рабочего стола, системные настройки KDE
+pkgname=axon-branding
+pkgver=${AXON_PKGVER:-0}
+pkgrel=1
+pkgdesc="Оформление AXON Linux"
+arch=('any')
+url="https://axon-project.ru"
+license=('GPL-3.0-or-later')
+depends=('plymouth' 'sddm' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg')
+backup=('etc/xdg/kdeglobals' 'etc/xdg/kscreenlockerrc' 'etc/xdg/ksplashrc' 'etc/sddm.conf.d/10-axon-theme.conf')
+install=axon-branding.install
+
+package() {
+    cp -r "$startdir/../../pkgsrc/axon-branding/." "$pkgdir/"
+    find "$pkgdir" -type d -exec chmod 755 {} +
+    find "$pkgdir" -type f -exec chmod 644 {} +
+}

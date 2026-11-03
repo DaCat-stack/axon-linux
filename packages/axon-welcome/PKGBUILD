@@ -1,0 +1,16 @@
+# AXON Linux: окно приветствия «Выбери свой стиль»
+pkgname=axon-welcome
+pkgver=${AXON_PKGVER:-0}
+pkgrel=1
+pkgdesc="Окно приветствия AXON: выбор стиля рабочего стола"
+arch=('any')
+url="https://axon-project.ru"
+license=('GPL-3.0-or-later')
+depends=('python' 'pyside6' 'plasma-workspace' 'axon-branding')
+
+package() {
+    cp -r "$startdir/../../pkgsrc/axon-welcome/." "$pkgdir/"
+    find "$pkgdir" -type d -exec chmod 755 {} +
+    find "$pkgdir" -type f -exec chmod 644 {} +
+    install -Dm755 "$startdir/../../pkgsrc/axon-welcome/usr/bin/axon-welcome" "$pkgdir/usr/bin/axon-welcome"
+}

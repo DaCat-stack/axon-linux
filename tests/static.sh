@@ -39,7 +39,8 @@ json_id() {   # json_id <файл> <ожидаемый KPlugin.Id>
 }
 
 # --- обои ---
-WP=$AIR/usr/share/wallpapers/AXON
+BR=pkgsrc/axon-branding
+WP=$BR/usr/share/wallpapers/AXON
 check "обои 3840x2160" png_size $WP/contents/images/3840x2160.png 3840 2160
 check "обои 1920x1080" png_size $WP/contents/images/1920x1080.png 1920 1080
 check "превью обоев 400x225" png_size $WP/contents/screenshot.png 400 225
@@ -48,14 +49,15 @@ check "обои metadata.json" json_id $WP/metadata.json AXON
 has() { grep -q -- "$2" "$1"; }   # has <файл> <строка>
 
 # --- Plymouth ---
-PT=$AIR/usr/share/plymouth/themes/axon
+PT=$BR/usr/share/plymouth/themes/axon
 for f in axon.plymouth axon.script blue.png white.png glow.png dot.png field.png sheen-00.png sheen-11.png; do
     check "plymouth: $f" test -s "$PT/$f"
 done
 check "plymouth: модуль script" has $PT/axon.plymouth "ModuleName=script"
 check "plymouth: ImageDir" has $PT/axon.plymouth "ImageDir=/usr/share/plymouth/themes/axon"
 check "plymouth: ScriptFile" has $PT/axon.plymouth "ScriptFile=/usr/share/plymouth/themes/axon/axon.script"
-check "plymouth: тема axon по умолчанию" has $AIR/etc/plymouth/plymouthd.conf "Theme=axon"
+check "plymouth: тема axon ставится пакетом" has packages/axon-branding/axon-branding.install "plymouth-set-default-theme axon"
+check "plymouthd.conf не в airootfs (он от пакета plymouth)" test ! -e $AIR/etc/plymouth/plymouthd.conf
 check "plymouth: размер от высоты экрана" has $PT/axon.script "Window.GetHeight()"
 check "plymouth: окно пароля" has $PT/axon.script "SetDisplayPasswordFunction"
 check "plymouth: пакет в списке" grep -qx plymouth profile/packages.x86_64
@@ -64,7 +66,7 @@ check "хук plymouth на реальном конфиге releng" tests/test_p
 check "build.sh: quiet splash" has build.sh "quiet splash"
 
 # --- SDDM ---
-ST=$AIR/usr/share/sddm/themes/axon
+ST=$BR/usr/share/sddm/themes/axon
 for f in metadata.desktop theme.conf Main.qml TopBar.qml LoginCard.qml PowerBar.qml Avatar.qml background.png logo.png icons/arrow.svg; do
     check "sddm: $f" test -s "$ST/$f"
 done
@@ -74,11 +76,13 @@ check "sddm: карточка только на основном экране" h
 check "sddm: «Введите пароль»" has $ST/LoginCard.qml "Введите пароль"
 for w in Сон Перезагрузка Выключение; do check "sddm: «${w}»" has $ST/PowerBar.qml "$w"; done
 check "sddm: раскладка в верхней панели" has $ST/TopBar.qml "keyboard.currentLayout"
-check "sddm: тема включена" has $AIR/etc/sddm.conf.d/axon.conf "Current=axon"
+check "sddm: тема включена" has $BR/etc/sddm.conf.d/10-axon-theme.conf "Current=axon"
+check "sddm: автовход только в live" has $AIR/etc/sddm.conf.d/zz-live.conf "User=axon"
+check "cleanup убирает автовход live" has $AIR/usr/share/axon/target/cleanup.sh "zz-live.conf"
 check "sddm: шрифт Inter" grep -qx inter-font profile/packages.x86_64
 
 # --- пресеты рабочего стола ---
-LNF=$AIR/usr/share/plasma/look-and-feel
+LNF=$BR/usr/share/plasma/look-and-feel
 for v in a b c; do
     P=$LNF/org.axon.desktop.$v
     check "пресет $v: metadata.json" json_id $P/metadata.json org.axon.desktop.$v
@@ -91,19 +95,20 @@ check "пресет a: меню kickoff" has $LNF/org.axon.desktop.a/contents/la
 check "пресет a: плавающая панель" has $LNF/org.axon.desktop.a/contents/layouts/org.kde.plasma.desktop-layout.js "floating"
 check "пресет b: глобальное меню" has $LNF/org.axon.desktop.b/contents/layouts/org.kde.plasma.desktop-layout.js "org.kde.plasma.appmenu"
 check "пресет c: док слева" has $LNF/org.axon.desktop.c/contents/layouts/org.kde.plasma.desktop-layout.js '"left"'
-check "по умолчанию пресет A" has $AIR/etc/xdg/kdeglobals "LookAndFeelPackage=org.axon.desktop.a"
-check "иконки Papirus-Dark" has $AIR/etc/xdg/kdeglobals "Theme=Papirus-Dark"
-check "лого в pixmaps" test -s $AIR/usr/share/pixmaps/axon-logo.png
+check "по умолчанию пресет A" has $BR/etc/xdg/kdeglobals "LookAndFeelPackage=org.axon.desktop.a"
+check "иконки Papirus-Dark" has $BR/etc/xdg/kdeglobals "Theme=Papirus-Dark"
+check "лого в pixmaps" test -s $BR/usr/share/pixmaps/axon-logo.png
 for p in papirus-icon-theme discord; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
 
 # --- окно приветствия ---
-WL=$AIR/usr/lib/axon-welcome/axon_welcome
+WR=pkgsrc/axon-welcome
+WL=$WR/usr/lib/axon-welcome/axon_welcome
 check "приветствие: юнит-тесты" python3 -m unittest tests/test_presets.py
-for f in $WL/main.py $WL/Main.qml $AIR/usr/bin/axon-welcome $AIR/usr/share/applications/axon-welcome.desktop $AIR/etc/xdg/autostart/axon-welcome.desktop; do
-    check "приветствие: ${f#$AIR}" test -s "$f"
+for f in $WL/main.py $WL/Main.qml $WR/usr/bin/axon-welcome $WR/usr/share/applications/axon-welcome.desktop $WR/etc/xdg/autostart/axon-welcome.desktop; do
+    check "приветствие: ${f#$WR}" test -s "$f"
 done
-check "приветствие: запуск исполняемый" test -x $AIR/usr/bin/axon-welcome
-check "приветствие: автозапуск с --autostart" has $AIR/etc/xdg/autostart/axon-welcome.desktop "axon-welcome --autostart"
+check "приветствие: пакет ставит запуск с правами 755" has packages/axon-welcome/PKGBUILD "install -Dm755 .*usr/bin/axon-welcome"
+check "приветствие: автозапуск с --autostart" has $WR/etc/xdg/autostart/axon-welcome.desktop "axon-welcome --autostart"
 check "приветствие: заголовок" has $WL/Main.qml "Выбери свой стиль"
 check "приветствие: кнопка «Позже»" has $WL/Main.qml "Позже"
 check "приветствие: python синтаксис" python3 -m py_compile $WL/main.py
@@ -138,9 +143,9 @@ check "fix2: ярлык установки убран и из домашних �
 check "fix2: команда axon-install убрана" has $CL "rm -f /usr/local/bin/axon-install"
 check "fix3: зеркала pacman в установленной системе" has $CL "/etc/pacman.d/mirrorlist"
 check "fix3: в mirrorlist есть сервер" grep -q "^Server = " $AIR/usr/share/axon/target/mirrorlist
-check "fix4: обои AXON на экране блокировки" has $AIR/etc/xdg/kscreenlockerrc "Image=file:///usr/share/wallpapers/AXON"
+check "fix4: обои AXON на экране блокировки" has $BR/etc/xdg/kscreenlockerrc "Image=file:///usr/share/wallpapers/AXON"
 check "fix5: Binding не восстанавливает старое имя" test "$(grep -c 'restoreMode: Binding.RestoreNone' $ST/LoginCard.qml)" -eq 3
-check "fix6: заставка KDE отключена системно" has $AIR/etc/xdg/ksplashrc "Engine=none"
+check "fix6: заставка KDE отключена системно" has $BR/etc/xdg/ksplashrc "Engine=none"
 check "fix7: без GRUB_SAVEDEFAULT (btrfs)" sh -c "! grep -q SAVEDEFAULT $CA/modules/grubcfg.conf"
 
 # --- пакеты AXON ---
@@ -151,6 +156,14 @@ check "есть пакет axon-keyring" test -s packages/axon-keyring/PKGBUILD
 for pb in packages/*/PKGBUILD; do
     [ -e "$pb" ] && check "PKGBUILD ${pb#packages/}" pkgbuild_ok "$pb"
 done
+for n in axon-branding axon-welcome; do check "есть пакет $n" test -s packages/$n/PKGBUILD; done
+for pb in packages/*/PKGBUILD; do check "версия из git: ${pb#packages/}" has "$pb" 'pkgver=${AXON_PKGVER:-0}'; done
+arch_owned() { ! find pkgsrc -path '*/etc/plymouth/plymouthd.conf' -o -path '*/etc/pacman.conf' -o -path '*/etc/sddm.conf' -o -path '*/etc/mkinitcpio.conf' | grep -q .; }
+check "пакеты не трогают файлы пакетов Arch" arch_owned
+for p in axon-keyring axon-branding axon-welcome; do check "в ISO пакет $p" grep -qx $p profile/packages.x86_64; done
+check "сборка ISO берёт полную историю git" has .github/workflows/build-iso.yml "fetch-depth: 0"
+check "свои пакеты собираются без проверки зависимостей" has ci/build-packages.sh "makepkg -d"
+check "скриншоты окна входа смотрят в pkgsrc" has ci/greeter-shot.sh "pkgsrc/axon-branding/usr/share/sddm/themes/axon"
 check "ci/build-packages.sh существует" test -x ci/build-packages.sh
 check "build.sh собирает пакеты AXON" has build.sh "build-packages.sh"
 

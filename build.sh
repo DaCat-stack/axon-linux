@@ -39,6 +39,13 @@ cat "$PROFILE/packages.x86_64" "$ROOT/profile/packages.x86_64" \
     | sed 's/#.*//; s/[[:space:]]//g; /^$/d' | sort -u > "$PROFILE/packages.tmp"
 mv "$PROFILE/packages.tmp" "$PROFILE/packages.x86_64"
 
+# --- Анимация загрузки: хук plymouth в initramfs и «quiet splash» в меню загрузки ---
+sed -i 's/\bkms\b/kms plymouth/' "$PROFILE/airootfs/etc/mkinitcpio.conf.d/archiso.conf"
+grep -q 'kms plymouth' "$PROFILE/airootfs/etc/mkinitcpio.conf.d/archiso.conf"
+for f in "$PROFILE"/syslinux/*.cfg "$PROFILE"/grub/*.cfg "$PROFILE"/efiboot/loader/entries/*.conf; do
+    sed -i '/archisobasedir=/{/accessibility/!s/$/ quiet splash/}' "$f"
+done
+
 # --- Брендинг ---
 sed -i \
     -e 's|^iso_name=.*|iso_name="axon"|' \

@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=AXON
+Description=Анимация загрузки AXON Linux
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/axon
+ScriptFile=/usr/share/plymouth/themes/axon/axon.script

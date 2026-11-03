@@ -45,4 +45,21 @@ check "обои 1920x1080" png_size $WP/contents/images/1920x1080.png 1920 1080
 check "превью обоев 400x225" png_size $WP/contents/screenshot.png 400 225
 check "обои metadata.json" json_id $WP/metadata.json AXON
 
+has() { grep -q -- "$2" "$1"; }   # has <файл> <строка>
+
+# --- Plymouth ---
+PT=$AIR/usr/share/plymouth/themes/axon
+for f in axon.plymouth axon.script blue.png white.png glow.png dot.png field.png sheen-00.png sheen-11.png; do
+    check "plymouth: $f" test -s "$PT/$f"
+done
+check "plymouth: модуль script" has $PT/axon.plymouth "ModuleName=script"
+check "plymouth: ImageDir" has $PT/axon.plymouth "ImageDir=/usr/share/plymouth/themes/axon"
+check "plymouth: ScriptFile" has $PT/axon.plymouth "ScriptFile=/usr/share/plymouth/themes/axon/axon.script"
+check "plymouth: тема axon по умолчанию" has $AIR/etc/plymouth/plymouthd.conf "Theme=axon"
+check "plymouth: размер от высоты экрана" has $PT/axon.script "Window.GetHeight()"
+check "plymouth: окно пароля" has $PT/axon.script "SetDisplayPasswordFunction"
+check "plymouth: пакет в списке" grep -qx plymouth profile/packages.x86_64
+check "build.sh: хук plymouth" has build.sh "kms plymouth"
+check "build.sh: quiet splash" has build.sh "quiet splash"
+
 exit "$FAILED"

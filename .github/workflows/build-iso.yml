@@ -10,6 +10,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  greeter:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Окно входа — проверка QML и скриншоты
+        run: docker run --rm -v "$PWD:/build" archlinux:latest bash /build/ci/greeter-shot.sh /build/greeter
+      - name: Выложить скриншоты окна входа
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: greeter
+          path: greeter/
+          if-no-files-found: ignore
+
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 150

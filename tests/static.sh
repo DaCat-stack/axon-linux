@@ -62,4 +62,18 @@ check "plymouth: пакет в списке" grep -qx plymouth profile/packages.
 check "build.sh: хук plymouth" has build.sh "kms plymouth"
 check "build.sh: quiet splash" has build.sh "quiet splash"
 
+# --- SDDM ---
+ST=$AIR/usr/share/sddm/themes/axon
+for f in metadata.desktop theme.conf Main.qml TopBar.qml LoginCard.qml PowerBar.qml Avatar.qml background.png logo.png icons/arrow.svg; do
+    check "sddm: $f" test -s "$ST/$f"
+done
+check "sddm: Qt6" has $ST/metadata.desktop "QtVersion=6"
+check "sddm: MainScript" has $ST/metadata.desktop "MainScript=Main.qml"
+check "sddm: карточка только на основном экране" has $ST/Main.qml "primaryScreen"
+check "sddm: «Введите пароль»" has $ST/LoginCard.qml "Введите пароль"
+for w in Сон Перезагрузка Выключение; do check "sddm: «${w}»" has $ST/PowerBar.qml "$w"; done
+check "sddm: раскладка в верхней панели" has $ST/TopBar.qml "keyboard.currentLayout"
+check "sddm: тема включена" has $AIR/etc/sddm.conf.d/axon.conf "Current=axon"
+check "sddm: шрифт Inter" grep -qx inter-font profile/packages.x86_64
+
 exit "$FAILED"

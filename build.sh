@@ -23,6 +23,16 @@ rm -rf "$PROFILE/airootfs/etc/systemd/system/getty@tty1.service.d"
 sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' "$PROFILE/pacman.conf"
 cp "$PROFILE/pacman.conf" "$PROFILE/airootfs/etc/pacman.conf"
 
+# --- Пакеты из AUR (Calamares) — локальный репозиторий только для сборки ---
+LOCAL_REPO=/tmp/axon-repo
+"$ROOT/ci/build-aur.sh" "$LOCAL_REPO"
+if [ -f "$LOCAL_REPO/axon-local.db.tar.gz" ]; then
+    awk -v repo="$LOCAL_REPO" '!done && /^\[core\]/ {
+            print "[axon-local]\nSigLevel = Optional TrustAll\nServer = file://" repo "\n"; done=1 }
+        { print }' "$PROFILE/pacman.conf" > "$PROFILE/pacman.conf.new"
+    mv "$PROFILE/pacman.conf.new" "$PROFILE/pacman.conf"
+fi
+
 # --- Наши файлы и пакеты ---
 cp -a "$ROOT/profile/airootfs/." "$PROFILE/airootfs/"
 cat "$PROFILE/packages.x86_64" "$ROOT/profile/packages.x86_64" \

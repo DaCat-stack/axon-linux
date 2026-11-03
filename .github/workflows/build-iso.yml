@@ -2,15 +2,22 @@ name: Сборка ISO
 
 on:
   push:
-    branches: [main]
+    paths-ignore: ['docs/**', '**.md']
   workflow_dispatch:
+
+concurrency:
+  group: iso-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
+
+      - name: Статические проверки
+        run: tests/static.sh
 
       - name: Освободить место на диске
         run: |
@@ -20,6 +27,20 @@ jobs:
 
       - name: Собрать ISO в контейнере Arch
         run: docker run --rm --privileged -v "$PWD:/build" archlinux:latest bash /build/build.sh
+
+      - name: Загрузить ISO в QEMU и снять экран
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq qemu-system-x86 imagemagick
+          sudo chmod 666 /dev/kvm || true
+          ci/smoke-qemu.sh out/*.iso screens
+
+      - name: Выложить скриншоты
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screens
+          path: screens/
+          if-no-files-found: ignore
 
       - name: Выложить ISO
         uses: actions/upload-artifact@v4

@@ -28,9 +28,9 @@ Rectangle {
     Repeater {
         model: userModel
         Item {
-            Binding { when: index === card.current; target: card; property: "userName"; value: model.name }
-            Binding { when: index === card.current; target: card; property: "realName"; value: model.realName }
-            Binding { when: index === card.current; target: card; property: "userIcon"; value: model.icon }
+            Binding { restoreMode: Binding.RestoreNone; when: index === card.current; target: card; property: "userName"; value: model.name }
+            Binding { restoreMode: Binding.RestoreNone; when: index === card.current; target: card; property: "realName"; value: model.realName }
+            Binding { restoreMode: Binding.RestoreNone; when: index === card.current; target: card; property: "userIcon"; value: model.icon }
         }
     }
 

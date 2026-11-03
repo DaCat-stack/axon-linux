@@ -6,8 +6,18 @@ T=/usr/share/axon/target
 # --- live-пользователь и установщик ---
 rm -f /etc/sudoers.d/axon-live
 rm -f /etc/systemd/system/axon-live-user.service /etc/systemd/system/multi-user.target.wants/axon-live-user.service
-rm -f /etc/skel/Desktop/axon-install.desktop /usr/share/applications/axon-install.desktop /usr/share/applications/calamares.desktop
+rm -f /etc/skel/Desktop/axon-install.desktop /home/*/Desktop/axon-install.desktop
+rm -f /usr/share/applications/axon-install.desktop /usr/share/applications/calamares.desktop
+rm -f /usr/local/bin/axon-install
 cp "$T/sddm-axon.conf" /etc/sddm.conf.d/axon.conf          # тема остаётся, автовход — нет
+
+# --- ядро: archiso убирает его из /boot, берём из пакета linux ---
+set -- /usr/lib/modules/*/vmlinuz
+[ "$#" -eq 1 ] || { echo "ожидалось одно ядро в /usr/lib/modules, найдено: $*" >&2; exit 1; }
+install -Dm644 "$1" /boot/vmlinuz-linux
+
+# --- зеркала pacman (в live их заполнял reflector во временном слое) ---
+cp "$T/mirrorlist" /etc/pacman.d/mirrorlist
 
 # --- остатки шаблона archiso (releng) ---
 rm -f /etc/mkinitcpio.conf.d/archiso.conf

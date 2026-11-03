@@ -117,7 +117,6 @@ check "calamares: по умолчанию «рядом»" yaml_has $CA/modules/p
 check "calamares: GRUB для EFI" yaml_has $CA/modules/bootloader.conf '^efiBootLoader: *"grub"'
 check "calamares: os-prober включён" yaml_has $CA/modules/grubcfg.conf 'GRUB_DISABLE_OS_PROBER: *false'
 check "calamares: quiet splash" yaml_has $CA/modules/grubcfg.conf 'splash'
-check "calamares: ядро копируется" has $CA/modules/unpackfs.conf "vmlinuz-linux"
 for f in /etc/sudoers.d/axon-live axon-live-user.service /etc/skel/Desktop/axon-install.desktop mkinitcpio.conf.d/archiso.conf etc-pacman.d-gnupg.mount do-not-suspend.conf; do
     check "calamares: чистка $f" has $AIR/usr/share/axon/target/cleanup.sh "$f"
 done
@@ -129,6 +128,19 @@ for t in "Игры из Steam" "Программы Windows" "Твой стиль
 done
 check "calamares: ярлык в live" test -s $AIR/etc/skel/Desktop/axon-install.desktop
 for p in calamares grub os-prober efibootmgr ntfs-3g; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
+
+# --- исправления после ревью ---
+CL=$AIR/usr/share/axon/target/cleanup.sh
+check "fix1: unpackfs не зависит от флешки (copytoram)" sh -c "! grep -q bootmnt $CA/modules/unpackfs.conf"
+check "fix1: ядро берётся из /usr/lib/modules" has $CL "/usr/lib/modules"
+check "fix2: ярлык установки убран и из домашних папок" has $CL "/home/\*/Desktop/axon-install.desktop"
+check "fix2: команда axon-install убрана" has $CL "rm -f /usr/local/bin/axon-install"
+check "fix3: зеркала pacman в установленной системе" has $CL "/etc/pacman.d/mirrorlist"
+check "fix3: в mirrorlist есть сервер" grep -q "^Server = " $AIR/usr/share/axon/target/mirrorlist
+check "fix4: обои AXON на экране блокировки" has $AIR/etc/xdg/kscreenlockerrc "Image=file:///usr/share/wallpapers/AXON"
+check "fix5: Binding не восстанавливает старое имя" test "$(grep -c 'restoreMode: Binding.RestoreNone' $ST/LoginCard.qml)" -eq 3
+check "fix6: заставка KDE отключена системно" has $AIR/etc/xdg/ksplashrc "Engine=none"
+check "fix7: без GRUB_SAVEDEFAULT (btrfs)" sh -c "! grep -q SAVEDEFAULT $CA/modules/grubcfg.conf"
 
 # --- права: mkarchiso копирует airootfs без прав, исполняемые файлы надо перечислить ---
 while IFS= read -r f; do

@@ -13,7 +13,7 @@ install=axon-branding.install
 
 # шрифты меню загрузки: GRUB понимает только свой формат .pf2 — делаем из Inter, с кириллицей
 build() {
-    local font ranges=0x20-0x7E,0xA0-0xFF,0x400-0x4FF,0x2190-0x2193,0x2022
+    local font ranges=0x20-0x7E,0xA0-0xFF,0x400-0x4FF,0x2190-0x2193,0x2022-0x2022
     font=$(fc-match -f '%{file}' 'Inter')
     for size in 14 16 20; do
         grub-mkfont -n Inter -s "$size" -r "$ranges" -o "$srcdir/inter-regular-$size.pf2" "$font"

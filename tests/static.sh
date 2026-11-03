@@ -153,6 +153,11 @@ check "grub: все картинки темы на месте" theme_files_exist
 for n in nw n ne e se s sw w c; do check "grub: select_$n.png" test -s $GT/select_$n.png; done
 for i in axon windows efi; do check "grub: иконка $i" test -s $GT/icons/$i.png; done
 check "grub: шрифты собираются при сборке пакета" has packages/axon-branding/PKGBUILD "grub-mkfont"
+grub_ranges_ok() {  # grub-mkfont -r принимает только пары a-b
+    local r; r=$(grep -oE 'ranges=[^ ]+' packages/axon-branding/PKGBUILD | cut -d= -f2)
+    [ -n "$r" ] && ! tr ',' '\n' <<<"$r" | grep -vqE '^0x[0-9A-Fa-f]+-0x[0-9A-Fa-f]+$'
+}
+check "grub: диапазоны шрифта в формате grub-mkfont" grub_ranges_ok
 check "grub: в шрифтах есть кириллица" has packages/axon-branding/PKGBUILD "0x400-0x4FF"
 check "grub: тема включена в установленной системе" yaml_has $CA/modules/grubcfg.conf 'GRUB_THEME: *"/usr/share/grub/themes/axon/theme.txt"'
 check "grub: графический режим (не console)" sh -c "! grep -q 'GRUB_TERMINAL_OUTPUT: *\"console\"' $CA/modules/grubcfg.conf"

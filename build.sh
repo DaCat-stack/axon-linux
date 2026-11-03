@@ -16,7 +16,7 @@ cp -r /usr/share/archiso/configs/releng "$PROFILE"
 # --- Убираем то, что в releng конфликтует с десктопом ---
 # сеть делает NetworkManager, а не iwd/systemd-networkd; автологин root на tty1 и sshd не нужны
 find "$PROFILE/airootfs/etc/systemd/system" \
-    \( -name 'iwd.service' -o -name 'systemd-networkd*' -o -name 'sshd.service' \) -delete
+    \( -name 'iwd.service' -o -name 'systemd-networkd*' -o -name 'sshd.service' \) -prune -exec rm -rf {} +
 rm -rf "$PROFILE/airootfs/etc/systemd/system/getty@tty1.service.d"
 
 # --- multilib (нужен для Steam и 32-битного Wine) ---

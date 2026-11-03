@@ -59,7 +59,8 @@ check "plymouth: тема axon по умолчанию" has $AIR/etc/plymouth/pl
 check "plymouth: размер от высоты экрана" has $PT/axon.script "Window.GetHeight()"
 check "plymouth: окно пароля" has $PT/axon.script "SetDisplayPasswordFunction"
 check "plymouth: пакет в списке" grep -qx plymouth profile/packages.x86_64
-check "build.sh: хук plymouth" has build.sh "kms plymouth"
+check "build.sh: хук plymouth" has build.sh "add-plymouth-hook.sh"
+check "хук plymouth на реальном конфиге releng" tests/test_plymouth_hook.sh
 check "build.sh: quiet splash" has build.sh "quiet splash"
 
 # --- SDDM ---

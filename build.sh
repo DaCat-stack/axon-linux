@@ -40,8 +40,7 @@ cat "$PROFILE/packages.x86_64" "$ROOT/profile/packages.x86_64" \
 mv "$PROFILE/packages.tmp" "$PROFILE/packages.x86_64"
 
 # --- Анимация загрузки: хук plymouth в initramfs и «quiet splash» в меню загрузки ---
-sed -i 's/\bkms\b/kms plymouth/' "$PROFILE/airootfs/etc/mkinitcpio.conf.d/archiso.conf"
-grep -q 'kms plymouth' "$PROFILE/airootfs/etc/mkinitcpio.conf.d/archiso.conf"
+"$ROOT/ci/add-plymouth-hook.sh" "$PROFILE/airootfs/etc/mkinitcpio.conf.d/archiso.conf"
 for f in "$PROFILE"/syslinux/*.cfg "$PROFILE"/grub/*.cfg "$PROFILE"/efiboot/loader/entries/*.conf; do
     sed -i '/archisobasedir=/{/accessibility/!s/$/ quiet splash/}' "$f"
 done

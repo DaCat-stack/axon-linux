@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Установить AXON
+Comment=Установить AXON Linux на компьютер
+Exec=axon-install
+Icon=/usr/share/pixmaps/axon-logo.png
+Terminal=false
+Categories=System;

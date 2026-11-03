@@ -73,3 +73,10 @@ plymouth
 papirus-icon-theme
 discord
 pyside6
+
+# --- Установщик ---
+calamares
+grub
+os-prober
+efibootmgr
+ntfs-3g

@@ -108,4 +108,31 @@ check "приветствие: кнопка «Позже»" has $WL/Main.qml "П
 check "приветствие: python синтаксис" python3 -m py_compile $WL/main.py
 check "пакет pyside6" grep -qx pyside6 profile/packages.x86_64
 
+# --- установщик Calamares ---
+CA=$AIR/etc/calamares
+yaml_has() { grep -Eq -- "$2" "$1"; }
+check "calamares: settings.conf" test -s $CA/settings.conf
+check "calamares: шаги показа" python3 tests/calamares_sequence.py $CA/settings.conf
+check "calamares: по умолчанию «рядом»" yaml_has $CA/modules/partition.conf '^initialPartitioningChoice: *alongside'
+check "calamares: GRUB для EFI" yaml_has $CA/modules/bootloader.conf '^efiBootLoader: *"grub"'
+check "calamares: os-prober включён" yaml_has $CA/modules/grubcfg.conf 'GRUB_DISABLE_OS_PROBER: *false'
+check "calamares: quiet splash" yaml_has $CA/modules/grubcfg.conf 'splash'
+check "calamares: ядро копируется" has $CA/modules/unpackfs.conf "vmlinuz-linux"
+for f in /etc/sudoers.d/axon-live axon-live-user.service /etc/skel/Desktop/axon-install.desktop mkinitcpio.conf.d/archiso.conf etc-pacman.d-gnupg.mount do-not-suspend.conf; do
+    check "calamares: чистка $f" has $AIR/usr/share/axon/target/cleanup.sh "$f"
+done
+for f in branding.desc show.qml stylesheet.qss logo.png; do check "calamares: брендинг $f" test -s $CA/branding/axon/$f; done
+check "calamares: чистка запускается" has $CA/modules/shellprocess-cleanup.conf "cleanup.sh"
+check "calamares: root заблокирован" has $AIR/usr/share/axon/target/cleanup.sh "passwd -l root"
+for t in "Игры из Steam" "Программы Windows" "Твой стиль" "Магазин приложений"; do
+    check "calamares: слайд «${t}»" has $CA/branding/axon/show.qml "$t"
+done
+check "calamares: ярлык в live" test -s $AIR/etc/skel/Desktop/axon-install.desktop
+for p in calamares grub os-prober efibootmgr ntfs-3g; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
+
+# --- права: mkarchiso копирует airootfs без прав, исполняемые файлы надо перечислить ---
+while IFS= read -r f; do
+    check "права в profiledef: ${f#$AIR}" grep -qF "[\"${f#$AIR}\"]=\"0:0:755\"" build.sh
+done < <(find $AIR -type f -perm -u+x)
+
 exit "$FAILED"

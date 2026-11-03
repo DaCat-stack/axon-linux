@@ -1,0 +1,41 @@
+---
+componentName: axon
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: false
+windowExpanding: normal
+windowSize: 1000px,640px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+
+strings:
+    productName: "AXON Linux"
+    shortProductName: "AXON"
+    version: "2026.11"
+    shortVersion: "2026.11"
+    versionedName: "AXON Linux"
+    shortVersionedName: "AXON"
+    bootloaderEntryName: "AXON"
+    productUrl: "https://axon-project.ru"
+    supportUrl: "https://axon-project.ru"
+    knownIssuesUrl: ""
+    releaseNotesUrl: ""
+    donateUrl: ""
+
+images:
+    productLogo: "logo.png"
+    productIcon: "logo.png"
+    productWelcome: "welcome.png"
+
+slideshow: "show.qml"
+slideshowAPI: 2
+
+style:
+    SidebarBackground: "#0b1020"
+    SidebarText: "#cfd8e6"
+    SidebarTextCurrent: "#ffffff"
+    SidebarBackgroundCurrent: "#1d3557"
+
+uploadServer:
+    type: "none"

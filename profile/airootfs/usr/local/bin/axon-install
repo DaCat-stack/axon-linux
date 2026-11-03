@@ -1,0 +1,3 @@
+#!/bin/sh
+# Запуск установщика из live-сессии (у live-пользователя sudo без пароля)
+exec sudo -E calamares "$@"

@@ -164,6 +164,10 @@ for p in axon-keyring axon-branding axon-welcome; do check "в ISO пакет $p
 check "сборка ISO берёт полную историю git" has .github/workflows/build-iso.yml "fetch-depth: 0"
 check "свои пакеты собираются без проверки зависимостей" has ci/build-packages.sh "makepkg -d"
 check "скриншоты окна входа смотрят в pkgsrc" has ci/greeter-shot.sh "pkgsrc/axon-branding/usr/share/sddm/themes/axon"
+check "уведомление об обновлениях: тест" tests/test_update_age.sh
+check "уведомление: скрипт с правами 755" has packages/axon-branding/PKGBUILD "install -Dm755 .*usr/lib/axon/check-updates-age"
+check "уведомление: таймер включён для всех" has packages/axon-branding/PKGBUILD "timers.target.wants/axon-update-age.timer"
+check "уведомление: зависимость libnotify" has packages/axon-branding/PKGBUILD "libnotify"
 check "ci/build-packages.sh существует" test -x ci/build-packages.sh
 check "build.sh собирает пакеты AXON" has build.sh "build-packages.sh"
 

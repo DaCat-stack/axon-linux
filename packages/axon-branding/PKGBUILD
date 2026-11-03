@@ -6,7 +6,7 @@ pkgdesc="Оформление AXON Linux"
 arch=('any')
 url="https://axon-project.ru"
 license=('GPL-3.0-or-later')
-depends=('plymouth' 'sddm' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg')
+depends=('plymouth' 'sddm' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg' 'libnotify')
 backup=('etc/xdg/kdeglobals' 'etc/xdg/kscreenlockerrc' 'etc/xdg/ksplashrc' 'etc/sddm.conf.d/10-axon-theme.conf')
 install=axon-branding.install
 
@@ -14,4 +14,8 @@ package() {
     cp -r "$startdir/../../pkgsrc/axon-branding/." "$pkgdir/"
     find "$pkgdir" -type d -exec chmod 755 {} +
     find "$pkgdir" -type f -exec chmod 644 {} +
+    install -Dm755 "$startdir/../../pkgsrc/axon-branding/usr/lib/axon/check-updates-age" "$pkgdir/usr/lib/axon/check-updates-age"
+    # предупреждение «Обновления AXON не приходят» — включено для всех пользователей
+    install -d "$pkgdir/usr/lib/systemd/user/timers.target.wants"
+    ln -s ../axon-update-age.timer "$pkgdir/usr/lib/systemd/user/timers.target.wants/axon-update-age.timer"
 }

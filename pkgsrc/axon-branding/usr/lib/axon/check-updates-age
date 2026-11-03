@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# AXON: предупреждает, если каталог обновлений AXON давно не обновлялся.
+# Использование: check-updates-age [база] [дней]   (по умолчанию /var/lib/pacman/sync/axon.db, 14)
+DB="${1:-/var/lib/pacman/sync/axon.db}"
+DAYS="${2:-14}"
+TITLE="Обновления AXON не приходят"
+
+if [ -f "$DB" ]; then
+    age_days=$(( ($(date +%s) - $(date -r "$DB" +%s)) / 86400 ))
+    [ "$age_days" -le "$DAYS" ] && exit 0
+    when=$(date -r "$DB" +%d.%m.%Y)
+    body="Последнее обновление каталога AXON: $when. Проверь интернет или открой «Обновления» в Discover."
+else
+    body="Каталог обновлений AXON ещё ни разу не загружался. Проверь интернет или открой «Обновления» в Discover."
+fi
+notify-send -a AXON -i axon-logo "$TITLE" "$body"
+exit 0

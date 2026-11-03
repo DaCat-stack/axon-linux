@@ -1,0 +1,9 @@
+[Unit]
+Description=AXON: раз в день проверять, что обновления приходят
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1d
+
+[Install]
+WantedBy=timers.target

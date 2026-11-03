@@ -1,0 +1,6 @@
+[Unit]
+Description=AXON: проверка, что обновления приходят
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/axon/check-updates-age

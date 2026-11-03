@@ -95,4 +95,17 @@ check "иконки Papirus-Dark" has $AIR/etc/xdg/kdeglobals "Theme=Papirus-Dar
 check "лого в pixmaps" test -s $AIR/usr/share/pixmaps/axon-logo.png
 for p in papirus-icon-theme discord; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
 
+# --- окно приветствия ---
+WL=$AIR/usr/lib/axon-welcome/axon_welcome
+check "приветствие: юнит-тесты" python3 -m unittest tests/test_presets.py
+for f in $WL/main.py $WL/Main.qml $AIR/usr/bin/axon-welcome $AIR/usr/share/applications/axon-welcome.desktop $AIR/etc/xdg/autostart/axon-welcome.desktop; do
+    check "приветствие: ${f#$AIR}" test -s "$f"
+done
+check "приветствие: запуск исполняемый" test -x $AIR/usr/bin/axon-welcome
+check "приветствие: автозапуск с --autostart" has $AIR/etc/xdg/autostart/axon-welcome.desktop "axon-welcome --autostart"
+check "приветствие: заголовок" has $WL/Main.qml "Выбери свой стиль"
+check "приветствие: кнопка «Позже»" has $WL/Main.qml "Позже"
+check "приветствие: python синтаксис" python3 -m py_compile $WL/main.py
+check "пакет pyside6" grep -qx pyside6 profile/packages.x86_64
+
 exit "$FAILED"

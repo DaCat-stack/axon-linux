@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=AXON: стиль рабочего стола
+Comment=Выбрать раскладку: Windows 11, Mac или Ubuntu
+Exec=axon-welcome
+Icon=/usr/share/pixmaps/axon-logo.png
+Categories=Settings;DesktopSettings;

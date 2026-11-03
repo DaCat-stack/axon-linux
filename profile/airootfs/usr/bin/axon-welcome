@@ -1,0 +1,3 @@
+#!/bin/sh
+# Окно приветствия AXON «Выбери свой стиль»
+exec python3 /usr/lib/axon-welcome/axon_welcome/main.py "$@"

@@ -1,0 +1,12 @@
+[Unit]
+Description=AXON: создать пользователя live-сессии
+Before=display-manager.service
+ConditionPathExists=!/home/axon
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/useradd -m -G wheel,video,audio,input -s /bin/bash -c "AXON" axon
+ExecStart=/usr/bin/passwd -d axon
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,66 @@
+# Пакеты AXON Linux поверх стандартного набора archiso (releng)
+
+# --- Рабочий стол KDE Plasma 6 ---
+plasma-meta
+sddm
+konsole
+dolphin
+kate
+ark
+spectacle
+gwenview
+okular
+kcalc
+partitionmanager
+ffmpegthumbs
+packagekit-qt6
+flatpak
+xdg-user-dirs
+
+# --- Сеть и звук ---
+networkmanager
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+lib32-pipewire
+lib32-pipewire-jack
+
+# --- Видео: NVIDIA (GTX 16xx / RTX и новее) + встройка Intel ---
+nvidia-open
+nvidia-utils
+lib32-nvidia-utils
+nvidia-settings
+mesa
+lib32-mesa
+vulkan-intel
+lib32-vulkan-intel
+
+# --- Игры и программы Windows ---
+steam
+wine-staging
+wine-mono
+wine-gecko
+winetricks
+lutris
+gamemode
+lib32-gamemode
+mangohud
+lib32-mangohud
+gamescope
+
+# --- Повседневное ---
+firefox
+firefox-i18n-ru
+mpv
+7zip
+unrar
+unzip
+sudo
+
+# --- Шрифты ---
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+ttf-liberation

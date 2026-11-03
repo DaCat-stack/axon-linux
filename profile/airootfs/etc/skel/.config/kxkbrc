@@ -1,0 +1,5 @@
+[Layout]
+LayoutList=us,ru
+Use=true
+ResetOldOptions=true
+Options=grp:alt_shift_toggle

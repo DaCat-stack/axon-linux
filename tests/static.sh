@@ -142,6 +142,22 @@ for sv in "/@" "/@home" "/@cache" "/@log" "/@snapshots"; do check "подтом 
 check "снимки: шаг Calamares" has $CA/modules/shellprocess-snapshots.conf "snapshots.sh"
 for p in snapper snap-pac grub-btrfs inotify-tools btrfs-progs; do check "пакет $p" grep -qx $p profile/packages.x86_64; done
 
+# --- тема меню загрузки GRUB ---
+GT=$BR/usr/share/grub/themes/axon
+check "grub: theme.txt" test -s $GT/theme.txt
+theme_files_exist() {  # каждая картинка из theme.txt существует
+    local f
+    for f in $(grep -oE '"[^"]+\.png"' $GT/theme.txt | tr -d '"' | sed 's/\*/c/'); do test -s "$GT/$f" || return 1; done
+}
+check "grub: все картинки темы на месте" theme_files_exist
+for n in nw n ne e se s sw w c; do check "grub: select_$n.png" test -s $GT/select_$n.png; done
+for i in axon windows efi; do check "grub: иконка $i" test -s $GT/icons/$i.png; done
+check "grub: шрифты собираются при сборке пакета" has packages/axon-branding/PKGBUILD "grub-mkfont"
+check "grub: в шрифтах есть кириллица" has packages/axon-branding/PKGBUILD "0x400-0x4FF"
+check "grub: тема включена в установленной системе" yaml_has $CA/modules/grubcfg.conf 'GRUB_THEME: *"/usr/share/grub/themes/axon/theme.txt"'
+check "grub: графический режим (не console)" sh -c "! grep -q 'GRUB_TERMINAL_OUTPUT: *\"console\"' $CA/modules/grubcfg.conf"
+check "grub: снимки в меню по-русски" has $AIR/usr/share/axon/target/snapshots.sh "GRUB_BTRFS_SUBMENUNAME"
+
 # --- исправления после ревью ---
 CL=$AIR/usr/share/axon/target/cleanup.sh
 check "fix1: unpackfs не зависит от флешки (copytoram)" sh -c "! grep -q bootmnt $CA/modules/unpackfs.conf"

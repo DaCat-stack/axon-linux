@@ -1,0 +1,62 @@
+# AXON — тема меню загрузки GRUB (макет grub-menu.html, вариант «можно так»)
+title-text: ""
+desktop-image: "background.png"
+desktop-image-scale-method: "crop"
+desktop-color: "#0a0f1c"
+terminal-font: "Inter Regular 16"
+terminal-box: "select_*.png"
+
++ image {
+    left = 50%-36
+    top = 11%
+    file = "logo.png"
+}
++ label {
+    left = 0
+    top = 11%+80
+    width = 100%
+    align = "center"
+    text = "A X O N"
+    font = "Inter Bold 20"
+    color = "#ffffff"
+}
+
++ boot_menu {
+    left = 27%
+    top = 30%
+    width = 46%
+    height = 46%
+    item_font = "Inter Regular 20"
+    item_color = "#cfd8e6"
+    selected_item_font = "Inter Bold 20"
+    selected_item_color = "#ffffff"
+    item_height = 48
+    item_padding = 14
+    item_spacing = 8
+    icon_width = 32
+    icon_height = 32
+    item_icon_space = 16
+    selected_item_pixmap_style = "select_*.png"
+    scrollbar = false
+}
+
++ progress_bar {
+    id = "__timeout__"
+    left = 35%
+    top = 84%
+    width = 30%
+    height = 4
+    show_text = false
+    bg_color = "#2a3346"
+    fg_color = "#2f86f0"
+    border_color = "#2a3346"
+}
++ label {
+    left = 0
+    top = 88%
+    width = 100%
+    align = "center"
+    text = "↑↓ выбрать · Enter загрузить"
+    font = "Inter Regular 14"
+    color = "#9aa3b2"
+}

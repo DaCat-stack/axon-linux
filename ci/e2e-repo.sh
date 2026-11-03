@@ -20,7 +20,7 @@ for pkg in "$@"; do
         awk -v ch='$CH' -v base='$BASE' '!d && /^\[core\]/ { print \"[\" ch \"]\nSigLevel = Required DatabaseRequired\nServer = \" base \"/\" ch \"/\\\$arch\n\"; d=1 } { print }' /etc/pacman.conf > /tmp/p && cp /tmp/p /etc/pacman.conf
         pacman -Syu --noconfirm $pkg
         case $pkg in
-            axon-branding) test -s /usr/share/plymouth/themes/axon/axon.script; test -x /usr/lib/axon/check-updates-age ;;
+            axon-branding) test -s /usr/share/plymouth/themes/axon/axon.script; test -x /usr/lib/axon/check-updates-age; test -s /usr/share/grub/themes/axon/inter-regular-20.pf2; test -s /usr/share/grub/themes/axon/inter-bold-20.pf2 ;;
             axon-welcome)  test -x /usr/bin/axon-welcome ;;
             axon-keyring)  pacman-key --list-keys 98546F93C7C579F0A058B5F712B7AFBC4F2420BE >/dev/null ;;
         esac

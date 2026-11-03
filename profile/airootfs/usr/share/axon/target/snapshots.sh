@@ -17,6 +17,12 @@ grep -q 'grub-btrfs-overlayfs' "$ROOT/etc/mkinitcpio.conf" ||
     sed -i.bak -E '/^HOOKS=/ s/\)$/ grub-btrfs-overlayfs)/' "$ROOT/etc/mkinitcpio.conf"
 rm -f "$ROOT/etc/mkinitcpio.conf.bak"
 
+# пункт со снимками в меню загрузки — по-русски
+mkdir -p "$ROOT/etc/default/grub-btrfs"
+cfg="$ROOT/etc/default/grub-btrfs/config"
+grep -q '^GRUB_BTRFS_SUBMENUNAME=' "$cfg" 2>/dev/null ||
+    echo 'GRUB_BTRFS_SUBMENUNAME="Вернуться к снимку"' >> "$cfg"
+
 for unit in snapper-timeline.timer snapper-cleanup.timer grub-btrfsd.service; do
     systemctl enable "$unit"
 done

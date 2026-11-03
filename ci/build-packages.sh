@@ -7,6 +7,8 @@ OUT="${1:?каталог}"; SIGN="${2:-}"
 mkdir -p "$OUT"
 
 pacman -S --noconfirm --needed base-devel git
+# то, что нужно при сборке самих пакетов AXON (makedepends): шрифты меню загрузки
+pacman -S --noconfirm --needed grub inter-font fontconfig
 # зависимости пакетов AXON (Plasma, plymouth…) ставит mkarchiso, при сборке они не нужны: makepkg -d
 git config --global --add safe.directory "$ROOT"
 id builder >/dev/null 2>&1 || useradd -m builder

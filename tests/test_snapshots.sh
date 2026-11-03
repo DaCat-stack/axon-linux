@@ -33,6 +33,8 @@ for u in snapper-timeline.timer snapper-cleanup.timer grub-btrfsd.service; do
     grep -q "enable $u" "$SYSTEMCTL_LOG" || { echo "не включён $u"; exit 1; }
 done
 
+grep -qx 'GRUB_BTRFS_SUBMENUNAME="Вернуться к снимку"' "$tmp/root/etc/default/grub-btrfs/config" || { echo "нет русского названия снимков"; exit 1; }
+
 # повторный запуск не дублирует хук
 FAKE_FS=btrfs ROOT="$tmp/root" bash "$SCRIPT"
 [ "$(grep -o grub-btrfs-overlayfs "$tmp/root/etc/mkinitcpio.conf" | wc -l | tr -d ' ')" = 1 ] || { echo "хук продублирован"; exit 1; }

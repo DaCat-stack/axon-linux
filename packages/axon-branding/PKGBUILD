@@ -6,14 +6,26 @@ pkgdesc="Оформление AXON Linux"
 arch=('any')
 url="https://axon-project.ru"
 license=('GPL-3.0-or-later')
+makedepends=('grub' 'inter-font' 'fontconfig')
 depends=('plymouth' 'sddm' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg' 'libnotify')
 backup=('etc/xdg/kdeglobals' 'etc/xdg/kscreenlockerrc' 'etc/xdg/ksplashrc' 'etc/sddm.conf.d/10-axon-theme.conf')
 install=axon-branding.install
+
+# шрифты меню загрузки: GRUB понимает только свой формат .pf2 — делаем из Inter, с кириллицей
+build() {
+    local font ranges=0x20-0x7E,0xA0-0xFF,0x400-0x4FF,0x2190-0x2193,0x2022
+    font=$(fc-match -f '%{file}' 'Inter')
+    for size in 14 16 20; do
+        grub-mkfont -n Inter -s "$size" -r "$ranges" -o "$srcdir/inter-regular-$size.pf2" "$font"
+    done
+    grub-mkfont -b -n Inter -s 20 -r "$ranges" -o "$srcdir/inter-bold-20.pf2" "$font"
+}
 
 package() {
     cp -r "$startdir/../../pkgsrc/axon-branding/." "$pkgdir/"
     find "$pkgdir" -type d -exec chmod 755 {} +
     find "$pkgdir" -type f -exec chmod 644 {} +
+    install -m644 "$srcdir"/*.pf2 "$pkgdir/usr/share/grub/themes/axon/"
     install -Dm755 "$startdir/../../pkgsrc/axon-branding/usr/lib/axon/check-updates-age" "$pkgdir/usr/lib/axon/check-updates-age"
     # предупреждение «Обновления AXON не приходят» — включено для всех пользователей
     install -d "$pkgdir/usr/lib/systemd/user/timers.target.wants"

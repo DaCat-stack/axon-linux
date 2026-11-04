@@ -69,6 +69,11 @@ cp "$PROFILE/grub/themes/axon/icons/efi.png" "$PROFILE/grub/themes/axon/icons/ue
 # графический режим + тема (в releng там «terminal_output console»)
 "$ROOT/ci/grub-theme-cfg.sh" "$PROFILE/grub/grub.cfg"
 
+# заставка текстового меню BIOS (syslinux): AXON вместо Arch
+cp "$ROOT/branding/syslinux-splash.png" "$PROFILE/syslinux/splash.png"
+
+# --- Брендинг ---
+
 sed -i \
     -e 's|^iso_name=.*|iso_name="axon"|' \
     -e 's|^iso_label=.*|iso_label="AXON_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"|' \

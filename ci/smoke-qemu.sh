@@ -33,14 +33,41 @@ PY
     convert "$OUT/$1.ppm" "$OUT/$1.png" && rm -f "$OUT/$1.ppm"
 }
 
-run() {  # run <мс до 1-го снимка> <имя1> <мс до 2-го> <имя2> <аргументы qemu...>
+QGA=/tmp/axon-qga.sock
+
+journal() {  # journal <имя> — журнал гостя через qemu-guest-agent: <имя>-journal.txt и ошибки Plasma
+    python3 - "$QGA" "$OUT/$1" <<'PY'
+import base64, json, socket, sys, time
+s = socket.socket(socket.AF_UNIX); s.settimeout(30); s.connect(sys.argv[1]); f = s.makefile("rw")
+def cmd(c, **a):
+    f.write(json.dumps({"execute": c, "arguments": a}) + "\n"); f.flush()
+    return json.loads(f.readline())
+def run(argv):
+    pid = cmd("guest-exec", path=argv[0], arg=argv[1:], **{"capture-output": True})["return"]["pid"]
+    for _ in range(60):
+        st = cmd("guest-exec-status", pid=pid)["return"]
+        if st.get("exited"):
+            return base64.b64decode(st.get("out-data", "")).decode("utf-8", "replace")
+        time.sleep(1)
+    return "(таймаут)"
+cmd("guest-sync", id=12345)
+open(sys.argv[2] + "-journal.txt", "w").write(run(["/usr/bin/journalctl", "-b", "--no-pager", "-o", "short-monotonic"]))
+open(sys.argv[2] + "-plasma.txt", "w").write(run(["/usr/bin/sh", "-c",
+    "journalctl -b --no-pager -o cat | grep -iE 'plasmashell|layout|\\.js|look-and-feel|kwin_wayland.*(error|fail)' | tail -n 300"]))
+PY
+}
+
+run() {  # run <с до 1-го снимка> <имя1> <с до 2-го> <имя2> <аргументы qemu...>
     local t1=$1 n1=$2 t2=$3 n2=$4; shift 4
-    rm -f "$QMP"
+    rm -f "$QMP" "$QGA"
     qemu-system-x86_64 -enable-kvm -cpu host -smp 4 -vga virtio -display none \
-        -qmp "unix:$QMP,server,nowait" "$@" &
+        -qmp "unix:$QMP,server,nowait" \
+        -chardev "socket,path=$QGA,server=on,wait=off,id=qga0" -device virtio-serial \
+        -device "virtserialport,chardev=qga0,name=org.qemu.guest_agent.0" "$@" &
     local pid=$!
     sleep "$t1"; shot "$n1"
     sleep "$t2"; shot "$n2"
+    journal "$n2" || echo "::warning::не удалось снять журнал гостя ($n2)"
     kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null
 }
 

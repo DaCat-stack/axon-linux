@@ -169,6 +169,10 @@ check "флешка: тема берётся из пакета axon-branding" ha
 check "флешка: графический режим и тема в grub.cfg" has build.sh "grub-theme-cfg.sh"
 check "флешка: правка grub.cfg на настоящем releng" tests/test_grub_theme_cfg.sh
 check "CI: загрузка как с флешки (UEFI, диск, 8 ГБ)" has ci/smoke-qemu.sh "OVMF"
+check "CI: журнал гостя для разбора ошибок" has ci/smoke-qemu.sh "guest-exec"
+
+check "BIOS-меню: заставка AXON" png_size branding/syslinux-splash.png 640 480
+check "BIOS-меню: заставка подменяется при сборке" has build.sh "syslinux-splash.png"
 
 # --- исправления после ревью ---
 CL=$AIR/usr/share/axon/target/cleanup.sh

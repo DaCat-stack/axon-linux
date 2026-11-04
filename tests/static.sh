@@ -208,7 +208,23 @@ check "axon-branding не тянет sddm (у CachyOS свой экран вхо
 check "ISO по-прежнему ставит sddm" grep -qx sddm profile/packages.x86_64
 check "AXON поверх Arch: тест скрипта" tests/test_axon_on_arch.sh
 check "CachyOS: меню Limine и вход SDDM — тест" tests/test_axon_boot_login.sh
+check "CachyOS: скрипт переодевания синтаксис" bash -n tools/axon-rebrand-cachyos.sh
+check "CachyOS: не удаляем системные пакеты (keyring, mirrorlist, settings, hooks)" sh -c "! grep -qE \"cachyos-(keyring|mirrorlist|v3-mirrorlist|settings|hooks|kde-settings)\" tools/axon-rebrand-cachyos.sh"
 check "AXON поверх Arch: ключ сверяется по отпечатку" has tools/axon-on-arch.sh "98546F93C7C579F0A058B5F712B7AFBC4F2420BE"
+
+# --- имя системы AXON (поверх CachyOS/Arch) ---
+check "имя: тест axon-os-release" tests/test_os_release.sh
+HK=$BR/usr/share/libalpm/hooks/zz-axon-branding.hook
+check "имя: хук идёт после хуков CachyOS (zz-)" test -s $HK
+for t in filesystem cachyos-hooks lsb-release axon-branding; do check "имя: хук срабатывает на $t" grep -qx "Target = $t" $HK; done
+check "имя: хук запускает axon-os-release" has $HK "Exec = /usr/lib/axon/axon-os-release"
+check "имя: скрипт с правами 755" has packages/axon-branding/PKGBUILD "install -Dm755 .*usr/lib/axon/axon-os-release"
+check "имя: применяется при установке пакета" has packages/axon-branding/axon-branding.install "/usr/lib/axon/axon-os-release"
+check "«О системе»: лого и сайт AXON" sh -c 'grep -q "LogoPath=/usr/share/pixmaps/axon-logo.png" '$BR'/etc/xdg/kcm-about-distrorc && grep -q "Website=https://axon-project.ru" '$BR'/etc/xdg/kcm-about-distrorc'
+check "иконка axon-logo в hicolor" png_size $BR/usr/share/icons/hicolor/256x256/apps/axon-logo.png 256 256
+check "fastfetch: лого AXON" has $BR/etc/xdg/fastfetch/config.jsonc "/usr/share/axon/fastfetch-logo.txt"
+check "fastfetch: файл лого" test -s $BR/usr/share/axon/fastfetch-logo.txt
+check "fastfetch: конфиг — валидный JSON" python3 -c "import json,re,sys; json.loads(re.sub(r'//.*','',open(sys.argv[1]).read()))" $BR/etc/xdg/fastfetch/config.jsonc
 
 # --- устойчивость CI к сбоям зеркал Arch ---
 check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'

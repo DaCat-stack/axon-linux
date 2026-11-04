@@ -1,0 +1,8 @@
+// AXON: лого в fastfetch (его показывает терминал при открытии). Модули — по умолчанию.
+{
+    "logo": {
+        "type": "file",
+        "source": "/usr/share/axon/fastfetch-logo.txt",
+        "color": { "1": "38;2;47;134;240", "2": "97" }
+    }
+}

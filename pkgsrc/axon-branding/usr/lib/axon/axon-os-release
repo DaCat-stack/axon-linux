@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# AXON: имя системы — «AXON Linux» в os-release, lsb-release и /etc/issue.
+# Запускается хуком zz-axon-branding.hook ПОСЛЕ хуков базового дистрибутива (они пишут своё имя).
+# Служебные ID/ID_LIKE не трогаем: по ним программы понимают, как работать с системой.
+set -euo pipefail
+ROOT="${ROOT:-}"
+OS="$ROOT/etc/os-release"
+
+set_keys() {  # set_keys <файл> KEY=VALUE... — заменить или дописать
+    local f="$1"; shift
+    local kv k
+    for kv in "$@"; do
+        k="${kv%%=*}"
+        if grep -q "^$k=" "$f"; then
+            K="$k" V="$kv" awk 'index($0, ENVIRON["K"] "=") == 1 { print ENVIRON["V"]; next } { print }' "$f" > "$f.axon" && cat "$f.axon" > "$f" && rm -f "$f.axon"
+        else
+            printf '%s\n' "$kv" >> "$f"
+        fi
+    done
+}
+
+# чистый Arch: /etc/os-release — симлинк на файл пакета filesystem; его не трогаем, кладём свою копию
+if [ -L "$OS" ]; then
+    src=$(readlink -f "$OS" 2>/dev/null || true)
+    [ -f "$src" ] || src="$ROOT/usr/lib/os-release"
+    rm -f "$OS"; cp "$src" "$OS"
+fi
+[ -f "$OS" ] || exit 0
+
+set_keys "$OS" \
+    'NAME="AXON Linux"' \
+    'PRETTY_NAME="AXON Linux"' \
+    'ANSI_COLOR="38;2;47;134;240"' \
+    'HOME_URL="https://axon-project.ru/"' \
+    'DOCUMENTATION_URL="https://axon-project.ru/"' \
+    'SUPPORT_URL="https://axon-project.ru/"' \
+    'BUG_REPORT_URL="https://github.com/DaCat-stack/axon-linux/issues"' \
+    'LOGO=axon-logo'
+
+[ -f "$ROOT/etc/lsb-release" ] && set_keys "$ROOT/etc/lsb-release" 'DISTRIB_DESCRIPTION="AXON Linux"'
+for f in "$ROOT/etc/issue" "$ROOT/usr/share/factory/etc/issue"; do
+    [ -f "$f" ] && sed -i.axon 's/CachyOS Linux/AXON Linux/g; s/Arch Linux/AXON Linux/g' "$f" && rm -f "$f.axon"
+done
+exit 0

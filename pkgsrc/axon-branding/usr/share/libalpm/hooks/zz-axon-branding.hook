@@ -1,0 +1,15 @@
+# AXON: имя системы. Файл назван zz-…, чтобы идти ПОСЛЕ хуков базового дистрибутива
+# (CachyOS пишет своё имя в os-release при обновлении этих пакетов).
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = filesystem
+Target = cachyos-hooks
+Target = lsb-release
+Target = axon-branding
+
+[Action]
+Description = AXON: имя системы
+When = PostTransaction
+Exec = /usr/lib/axon/axon-os-release

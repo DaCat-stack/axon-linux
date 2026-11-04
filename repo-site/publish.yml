@@ -80,6 +80,7 @@ jobs:
           cat e2e-testing.txt
           docker run --rm -e AXON_SIGN_SUBKEY -e AXON_SIGN_PASS -v "$PWD:/w" archlinux:latest \
             bash /w/src/ci/publish-promote.sh /w/site /w/e2e-testing.txt
+          sudo chown -R "$(id -u):$(id -g)" site   # контейнер сменил владельца файлов
           echo "${{ steps.need.outputs.head }}" > site/built-sha.txt
           src/ci/publish-deploy.sh site "stable ${{ steps.need.outputs.head }}"
 

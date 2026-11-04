@@ -270,6 +270,7 @@ check "публикация: workflow в axon-repo" has repo-site/publish.yml "c
 check "публикация: без SSH-ключей (встроенный токен axon-repo)" sh -c '! grep -q "DEPLOY_KEY" repo-site/publish.yml && grep -q "contents: write" repo-site/publish.yml'
 check "публикация: Pages пересобирается по API" has ci/publish-deploy.sh "pages/builds"
 check "публикация: опубликованный коммит запоминается" has repo-site/publish.yml "built-sha.txt"
+check "публикация: права на сайт возвращаются до записи built-sha" sh -c 'awk "/Перенести прошедшие/,/built-sha.txt/" repo-site/publish.yml | grep -q "sudo chown"'
 check "axon-linux: пакеты только собираются, без секретов" sh -c '! grep -q "secrets\." .github/workflows/packages.yml'
 check "ISO: в pacman.conf установленной системы есть [axon]" has build.sh "Server = https://dacat-stack.github.io/axon-repo/axon/"
 check "ISO: [axon] только с подписью" has build.sh "SigLevel = Required DatabaseRequired"

@@ -3,14 +3,18 @@
 # Использование: check-updates-age [база] [дней]   (по умолчанию /var/lib/pacman/sync/axon.db, 14)
 DB="${1:-/var/lib/pacman/sync/axon.db}"
 DAYS="${2:-14}"
+MACHINE_ID="${AXON_MACHINE_ID:-/etc/machine-id}"   # создаётся при установке — по нему «возраст» системы
 TITLE="Обновления AXON не приходят"
 
+days_since() { echo $(( ($(date +%s) - $(date -r "$1" +%s)) / 86400 )); }
+
 if [ -f "$DB" ]; then
-    age_days=$(( ($(date +%s) - $(date -r "$DB" +%s)) / 86400 ))
-    [ "$age_days" -le "$DAYS" ] && exit 0
+    [ "$(days_since "$DB")" -le "$DAYS" ] && exit 0
     when=$(date -r "$DB" +%d.%m.%Y)
     body="Последнее обновление каталога AXON: $when. Проверь интернет или открой «Обновления» в Discover."
 else
+    # свежая система ещё не успела обновиться — это нормально
+    [ -f "$MACHINE_ID" ] && [ "$(days_since "$MACHINE_ID")" -le "$DAYS" ] && exit 0
     body="Каталог обновлений AXON ещё ни разу не загружался. Проверь интернет или открой «Обновления» в Discover."
 fi
 notify-send -a AXON -i axon-logo "$TITLE" "$body"

@@ -178,6 +178,21 @@ check "BIOS-меню: заставка подменяется при сборк�
 check "помощник KDE не запускается сам (live и установленная система)" has build.sh "NoExtract = etc/xdg/autostart/org.kde.plasma-welcome.desktop"
 check "правка pacman.conf на настоящем releng" tests/test_noextract.sh
 
+# --- исправления после ревью плана A ---
+for mp in /proc /sys /dev /run /run/udev /sys/firmware/efi/efivars; do
+    check "fixA1: mount.conf монтирует $mp в новую систему" yaml_has $CA/modules/mount.conf "mountPoint: *${mp}\$"
+done
+check "fixA1: mount.conf опции подкачки btrfs" has $CA/modules/mount.conf "btrfs_swap"
+check "fixA2: e2e пишет результат в свой файл" sh -c 'grep -q "e2e-testing.txt" .github/workflows/packages.yml && grep -q "OUT=\"\${3:?" ci/e2e-repo.sh'
+check "fixA2: проверка смотрит итог testing" has .github/workflows/packages.yml 'grep -q "^\$p " e2e-testing.txt'
+check "fixA3: e2e записывает проверенную версию" has ci/e2e-repo.sh 'pacman -Q $pkg >'
+check "fixA3: в axon переносится ровно проверенная версия" has ci/publish-promote.sh 'read -r name ver'
+check "fixA4: публикация только с main" sh -c 'awk "/^on:/,/^concurrency:/" .github/workflows/packages.yml | grep -q "branches: \[main\]"'
+check "fixA5: уведомление: тест" tests/test_update_age.sh
+check "fixA5: уведомление не в live" has $BR/usr/lib/systemd/user/axon-update-age.service "ConditionPathExists=!/run/archiso"
+check "fixA6: ошибка pacman-key --init останавливает установку" grep -qF "pacman-key --init || exit 1" $AIR/usr/share/axon/target/cleanup.sh
+check "fixA6: ошибка pacman-key --populate останавливает установку" grep -qF "pacman-key --populate archlinux axon || exit 1" $AIR/usr/share/axon/target/cleanup.sh
+
 # --- устойчивость CI к сбоям зеркал Arch ---
 check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'
 for f in build.sh ci/greeter-shot.sh ci/publish-build.sh ci/publish-promote.sh ci/e2e-repo.sh; do

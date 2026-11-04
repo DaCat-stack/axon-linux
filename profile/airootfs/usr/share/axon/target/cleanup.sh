@@ -36,6 +36,6 @@ rm -rf /root/.automated_script.sh /root/.zlogin /etc/motd \
 passwd -l root
 
 # --- ключи pacman (в live они были во временной памяти) ---
-pacman-key --init
-pacman-key --populate archlinux axon
+pacman-key --init || exit 1
+pacman-key --populate archlinux axon || exit 1
 exit 0

@@ -2,6 +2,7 @@ name: Пакеты AXON
 
 on:
   push:
+    branches: [main]   # в стабильный канал — только из main
     paths:
       - 'packages/**'
       - 'pkgsrc/**'
@@ -49,21 +50,21 @@ jobs:
         run: ci/publish-deploy.sh site "testing $(git rev-parse --short HEAD)"
 
       - name: Проверка axon-testing как у пользователя
-        run: ci/e2e-repo.sh "$BASE" axon-testing $PKGS || true
+        run: ci/e2e-repo.sh "$BASE" axon-testing e2e-testing.txt $PKGS || true
 
       - name: Перенести прошедшие в axon
         env:
           AXON_SIGN_SUBKEY: ${{ secrets.AXON_SIGN_SUBKEY }}
           AXON_SIGN_PASS: ${{ secrets.AXON_SIGN_PASS }}
         run: |
-          cat e2e-passed.txt
+          cat e2e-testing.txt
           docker run --rm -e AXON_SIGN_SUBKEY -e AXON_SIGN_PASS -v "$PWD:/build" archlinux:latest \
-            bash /build/ci/publish-promote.sh /build/site /build/e2e-passed.txt
+            bash /build/ci/publish-promote.sh /build/site /build/e2e-testing.txt
           ci/publish-deploy.sh site "stable $(git rev-parse --short HEAD)"
 
       - name: Проверка axon как у пользователя
-        run: ci/e2e-repo.sh "$BASE" axon $PKGS
+        run: ci/e2e-repo.sh "$BASE" axon e2e-stable.txt $PKGS
 
       - name: Не все пакеты прошли проверку в axon-testing
         run: |
-          for p in $PKGS; do grep -qx "$p" e2e-passed.txt || { echo "::error::$p не перенесён в axon"; exit 1; }; done
+          for p in $PKGS; do grep -q "^$p " e2e-testing.txt || { echo "::error::$p не прошёл проверку в axon-testing"; exit 1; }; done

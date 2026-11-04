@@ -1,5 +1,7 @@
 [Unit]
 Description=AXON: проверка, что обновления приходят
+# в live-сессии с флешки обновлений и не должно быть
+ConditionPathExists=!/run/archiso
 
 [Service]
 Type=oneshot

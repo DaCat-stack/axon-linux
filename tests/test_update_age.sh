@@ -20,6 +20,13 @@ touch "$tmp/fresh.db"; run "$tmp/fresh.db"
 touch -t "$(date -v-20d +%Y%m%d%H%M 2>/dev/null || date -d '20 days ago' +%Y%m%d%H%M)" "$tmp/old.db"; run "$tmp/old.db"
 grep -qx "Обновления AXON не приходят" "$NOTIFY_LOG" || { echo "старая база: нет уведомления"; exit 1; }
 
+# нет базы на свежей установке (machine-id моложе 14 дней) — ещё рано тревожить
+touch "$tmp/machine-id"; export AXON_MACHINE_ID="$tmp/machine-id"
 run "$tmp/missing.db"
-grep -qx "Обновления AXON не приходят" "$NOTIFY_LOG" || { echo "нет базы: нет уведомления"; exit 1; }
+[ ! -s "$NOTIFY_LOG" ] || { echo "свежая установка без базы: уведомлять рано"; exit 1; }
+
+# нет базы, а система стоит уже 20 дней — предупреждаем
+touch -t "$(date -v-20d +%Y%m%d%H%M 2>/dev/null || date -d '20 days ago' +%Y%m%d%H%M)" "$tmp/machine-id"
+run "$tmp/missing.db"
+grep -qx "Обновления AXON не приходят" "$NOTIFY_LOG" || { echo "нет базы 20 дней: нет уведомления"; exit 1; }
 echo PASS

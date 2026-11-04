@@ -3,6 +3,8 @@
 # Берём официальный профиль archiso "releng" и накладываем поверх него profile/.
 set -euo pipefail
 
+"$(cd "$(dirname "$0")" && pwd)/ci/use-mirrors.sh"
+
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 PROFILE=/tmp/axon-profile
 WORK=/tmp/axon-work

@@ -13,6 +13,7 @@ curl -fsI "$BASE/$CH/x86_64/$CH.db" >/dev/null || { echo "нет базы $BASE/
 failed=0
 for pkg in "$@"; do
     if docker run --rm -v "$ROOT:/build:ro" archlinux:latest bash -euo pipefail -c "
+        bash /build/ci/use-mirrors.sh
         pacman-key --init >/dev/null 2>&1
         pacman-key --populate archlinux >/dev/null 2>&1
         pacman-key --add /build/packages/axon-keyring/axon.gpg

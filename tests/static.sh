@@ -174,6 +174,12 @@ check "CI: журнал гостя для разбора ошибок" has ci/sm
 check "BIOS-меню: заставка AXON" png_size branding/syslinux-splash.png 640 480
 check "BIOS-меню: заставка подменяется при сборке" has build.sh "syslinux-splash.png"
 
+# --- устойчивость CI к сбоям зеркал Arch ---
+check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'
+for f in build.sh ci/greeter-shot.sh ci/publish-build.sh ci/publish-promote.sh ci/e2e-repo.sh; do
+    check "CI: $f берёт запасные зеркала" has $f "use-mirrors.sh"
+done
+
 # --- исправления после ревью ---
 CL=$AIR/usr/share/axon/target/cleanup.sh
 check "fix1: unpackfs не зависит от флешки (copytoram)" sh -c "! grep -q bootmnt $CA/modules/unpackfs.conf"

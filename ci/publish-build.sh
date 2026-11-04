@@ -2,6 +2,7 @@
 # Внутри контейнера archlinux: собрать и подписать пакеты AXON, добавить новые в канал axon-testing.
 # Использование: ci/publish-build.sh <каталог сайта>   (нужны $AXON_SIGN_SUBKEY, $AXON_SIGN_PASS)
 set -euo pipefail
+"$(cd "$(dirname "$0")" && pwd)/use-mirrors.sh"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SITE="${1:?сайт}"
 pacman -Syu --noconfirm --needed

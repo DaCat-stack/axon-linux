@@ -2,6 +2,7 @@
 # Внутри контейнера archlinux: перенести прошедшие e2e пакеты из axon-testing в axon.
 # Использование: ci/publish-promote.sh <каталог сайта> <файл со списком имён пакетов>
 set -euo pipefail
+"$(cd "$(dirname "$0")" && pwd)/use-mirrors.sh"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SITE="${1:?сайт}"; LIST="${2:?список}"
 pacman -Syu --noconfirm --needed sudo

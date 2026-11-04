@@ -2,6 +2,7 @@
 # Проверка QML окна входа и его скриншоты (1920x1080 и 3840x2160).
 # Запускается внутри контейнера archlinux от root: ci/greeter-shot.sh <каталог для скриншотов>
 set -euo pipefail
+"$(cd "$(dirname "$0")" && pwd)/use-mirrors.sh"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${1:?outdir}"
 THEME="$ROOT/pkgsrc/axon-branding/usr/share/sddm/themes/axon"

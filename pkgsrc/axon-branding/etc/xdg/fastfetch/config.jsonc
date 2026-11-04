@@ -1,8 +1,30 @@
-// AXON: лого в fastfetch (его показывает терминал при открытии). Модули — по умолчанию.
+// AXON: сведения о системе при открытии терминала. Лого — по настоящей картинке (полублоки, 24-бит цвет).
 {
     "logo": {
-        "type": "file",
-        "source": "/usr/share/axon/fastfetch-logo.txt",
-        "color": { "1": "38;2;47;134;240", "2": "97" }
-    }
+        "type": "file-raw",
+        "source": "/usr/share/axon/fastfetch-logo.ansi",
+        "width": 26,
+        "height": 13,
+        "padding": { "top": 1, "left": 1, "right": 3 }
+    },
+    "display": {
+        "separator": "",
+        "color": { "keys": "38;2;90;169;255", "title": "38;2;63;208;208" }
+    },
+    "modules": [
+        "title",
+        "separator",
+        { "type": "os", "key": "ОС           " },
+        { "type": "kernel", "key": "Ядро         " },
+        { "type": "uptime", "key": "Работает     " },
+        { "type": "packages", "key": "Пакеты       " },
+        { "type": "shell", "key": "Оболочка     " },
+        { "type": "de", "key": "Рабочий стол " },
+        { "type": "cpu", "key": "Процессор    " },
+        { "type": "gpu", "key": "Видеокарта   " },
+        { "type": "memory", "key": "Память       " },
+        { "type": "disk", "key": "Диск         ", "folders": "/" },
+        "break",
+        "colors"
+    ]
 }

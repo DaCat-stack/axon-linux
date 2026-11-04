@@ -1,0 +1,2 @@
+# AXON: показывать точки при вводе пароля sudo
+Defaults pwfeedback

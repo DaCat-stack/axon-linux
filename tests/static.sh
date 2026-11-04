@@ -222,9 +222,18 @@ check "имя: скрипт с правами 755" has packages/axon-branding/PK
 check "имя: применяется при установке пакета" has packages/axon-branding/axon-branding.install "/usr/lib/axon/axon-os-release"
 check "«О системе»: лого и сайт AXON" sh -c 'grep -q "LogoPath=/usr/share/pixmaps/axon-logo.png" '$BR'/etc/xdg/kcm-about-distrorc && grep -q "Website=https://axon-project.ru" '$BR'/etc/xdg/kcm-about-distrorc'
 check "иконка axon-logo в hicolor" png_size $BR/usr/share/icons/hicolor/256x256/apps/axon-logo.png 256 256
-check "fastfetch: лого AXON" has $BR/etc/xdg/fastfetch/config.jsonc "/usr/share/axon/fastfetch-logo.txt"
-check "fastfetch: файл лого" test -s $BR/usr/share/axon/fastfetch-logo.txt
 check "fastfetch: конфиг — валидный JSON" python3 -c "import json,re,sys; json.loads(re.sub(r'//.*','',open(sys.argv[1]).read()))" $BR/etc/xdg/fastfetch/config.jsonc
+
+# --- консоль «Стекло» и пароль sudo ---
+check "консоль: схема AXON — стекло (прозрачность + размытие)" sh -c 'grep -q "^Opacity=0.62" '$BR'/usr/share/konsole/AXON.colorscheme && grep -q "^Blur=true" '$BR'/usr/share/konsole/AXON.colorscheme'
+check "консоль: профиль AXON со схемой и шрифтом" sh -c 'grep -q "^ColorScheme=AXON" '$BR'/usr/share/konsole/AXON.profile && grep -q "^Font=JetBrains Mono" '$BR'/usr/share/konsole/AXON.profile'
+check "консоль: профиль AXON по умолчанию" has $BR/etc/xdg/konsolerc "DefaultProfile=AXON.profile"
+check "консоль: шрифт JetBrains Mono в зависимостях" has packages/axon-branding/PKGBUILD "ttf-jetbrains-mono"
+check "консоль: строка ввода fish" has $BR/etc/fish/functions/fish_prompt.fish "function fish_prompt"
+check "консоль: лого fastfetch из настоящей картинки (file-raw)" sh -c 'grep -q "\"file-raw\"" '$BR'/etc/xdg/fastfetch/config.jsonc && test -s '$BR'/usr/share/axon/fastfetch-logo.ansi'
+check "консоль: fastfetch показывает сведения о системе" has $BR/etc/xdg/fastfetch/config.jsonc '"modules"'
+check "sudo: точки при вводе пароля" grep -qx "Defaults pwfeedback" $BR/etc/sudoers.d/axon-pwfeedback
+check "sudo: файл sudoers ставится с правами 440" has packages/axon-branding/PKGBUILD "install -Dm440 .*etc/sudoers.d/axon-pwfeedback"
 
 # --- устойчивость CI к сбоям зеркал Arch ---
 check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'

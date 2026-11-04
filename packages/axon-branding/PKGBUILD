@@ -7,8 +7,8 @@ arch=('any')
 url="https://axon-project.ru"
 license=('GPL-3.0-or-later')
 makedepends=('grub' 'inter-font' 'fontconfig')
-depends=('plymouth' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg' 'libnotify')
-backup=('etc/xdg/kcm-about-distrorc' 'etc/xdg/fastfetch/config.jsonc' 'etc/xdg/plasma-welcomerc' 'etc/xdg/kdeglobals' 'etc/xdg/kscreenlockerrc' 'etc/xdg/ksplashrc' 'etc/sddm.conf.d/10-axon-theme.conf')
+depends=('plymouth' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg' 'libnotify' 'ttf-jetbrains-mono')
+backup=('etc/xdg/konsolerc' 'etc/xdg/kcm-about-distrorc' 'etc/xdg/fastfetch/config.jsonc' 'etc/xdg/plasma-welcomerc' 'etc/xdg/kdeglobals' 'etc/xdg/kscreenlockerrc' 'etc/xdg/ksplashrc' 'etc/sddm.conf.d/10-axon-theme.conf')
 install=axon-branding.install
 
 # шрифты меню загрузки: GRUB понимает только свой формат .pf2 — делаем из Inter, с кириллицей
@@ -26,6 +26,9 @@ package() {
     find "$pkgdir" -type d -exec chmod 755 {} +
     find "$pkgdir" -type f -exec chmod 644 {} +
     install -m644 "$srcdir"/*.pf2 "$pkgdir/usr/share/grub/themes/axon/"
+    # sudoers.d: права 440, иначе sudo файл не примет
+    install -dm750 "$pkgdir/etc/sudoers.d"
+    install -Dm440 "$startdir/../../pkgsrc/axon-branding/etc/sudoers.d/axon-pwfeedback" "$pkgdir/etc/sudoers.d/axon-pwfeedback"
     install -Dm755 "$startdir/../../pkgsrc/axon-branding/usr/lib/axon/axon-os-release" "$pkgdir/usr/lib/axon/axon-os-release"
     install -Dm755 "$startdir/../../pkgsrc/axon-branding/usr/lib/axon/check-updates-age" "$pkgdir/usr/lib/axon/check-updates-age"
     # предупреждение «Обновления AXON не приходят» — включено для всех пользователей

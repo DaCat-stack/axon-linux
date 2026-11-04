@@ -205,6 +205,7 @@ check "boot: cleanup выключает сжатие /boot ДО записи я�
 check "axon-branding не тянет sddm (у CachyOS свой экран входа)" sh -c '! grep -E "^depends=" packages/axon-branding/PKGBUILD | grep -q sddm'
 check "ISO по-прежнему ставит sddm" grep -qx sddm profile/packages.x86_64
 check "AXON поверх Arch: тест скрипта" tests/test_axon_on_arch.sh
+check "CachyOS: меню Limine и вход SDDM — тест" tests/test_axon_boot_login.sh
 check "AXON поверх Arch: ключ сверяется по отпечатку" has tools/axon-on-arch.sh "98546F93C7C579F0A058B5F712B7AFBC4F2420BE"
 
 # --- устойчивость CI к сбоям зеркал Arch ---

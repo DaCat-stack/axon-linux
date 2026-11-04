@@ -12,6 +12,7 @@ sign() { gpg --batch --yes --pinentry-mode loopback --passphrase "${AXON_SIGN_PA
 added=()
 for pkg in "$@"; do
     name=$(basename "$pkg")
+    case "$name" in *-debug-*) echo "пропускаю отладочный: $name"; continue ;; esac
     [ -e "$DIR/$name" ] && { echo "уже есть: $CH/$name"; continue; }
     [ -f "$pkg.sig" ] || { echo "нет подписи: $pkg"; exit 1; }
     cp "$pkg" "$pkg.sig" "$DIR/"

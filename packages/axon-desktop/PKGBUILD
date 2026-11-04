@@ -7,4 +7,4 @@ pkgdesc="AXON Linux: все компоненты системы"
 arch=('any')
 url="https://axon-project.ru"
 license=('GPL-3.0-or-later')
-depends=('axon-keyring' 'axon-branding' 'axon-welcome')
+depends=('axon-keyring' 'axon-branding' 'axon-welcome' 'axon-store')

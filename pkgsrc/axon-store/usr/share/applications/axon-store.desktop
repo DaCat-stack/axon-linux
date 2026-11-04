@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Магазин AXON
+Comment=Проверенные темы, иконки, курсоры и эффекты в один клик
+Exec=axon-store
+Icon=/usr/share/pixmaps/axon-logo.png
+Categories=Settings;DesktopSettings;
+Keywords=тема;иконки;курсор;оформление;магазин;theme;icons;

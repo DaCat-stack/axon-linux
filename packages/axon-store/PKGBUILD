@@ -1,0 +1,16 @@
+# AXON Linux: Магазин AXON — проверенное оформление в один клик
+pkgname=axon-store
+pkgver=${AXON_PKGVER:-0}
+pkgrel=1
+pkgdesc="Магазин AXON: проверенные темы, иконки, курсоры и эффекты"
+arch=('any')
+url="https://axon-project.ru"
+license=('GPL-3.0-or-later')
+depends=('python' 'pyside6' 'polkit' 'curl' 'plasma-workspace' 'kwin' 'kconfig' 'qt6-tools' 'axon-branding')
+
+package() {
+    cp -r "$startdir/../../pkgsrc/axon-store/." "$pkgdir/"
+    find "$pkgdir" -type d -exec chmod 755 {} +
+    find "$pkgdir" -type f -exec chmod 644 {} +
+    install -Dm755 "$startdir/../../pkgsrc/axon-store/usr/bin/axon-store" "$pkgdir/usr/bin/axon-store"
+}

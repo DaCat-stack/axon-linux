@@ -19,7 +19,7 @@ concurrency:
 
 env:
   BASE: https://dacat-stack.github.io/axon-repo
-  PKGS: axon-keyring axon-branding axon-welcome axon-desktop
+  AXON_PKGS: axon-keyring axon-branding axon-welcome axon-desktop axon-store
 
 jobs:
   publish:
@@ -39,6 +39,9 @@ jobs:
         with:
           ref: gh-pages
           path: site
+
+      - name: Список пакетов для проверки (свои + Магазин AXON из aur/store.txt)
+        run: echo "PKGS=$AXON_PKGS $(sed 's/#.*//' src/aur/store.txt | awk 'NF{print $1}' | xargs)" >> "$GITHUB_ENV"
 
       - name: Нужна ли публикация
         id: need

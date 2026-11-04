@@ -1,0 +1,36 @@
+{
+    "version": 1,
+    "sections": [
+        { "id": "themes",  "title": "Темы целиком",   "icon": "🎨" },
+        { "id": "icons",   "title": "Иконки",         "icon": "🗂" },
+        { "id": "cursors", "title": "Курсоры",        "icon": "🖱" },
+        { "id": "fx",      "title": "Эффекты окон",   "icon": "🔥" },
+        { "id": "tiling",  "title": "Раскладка окон", "icon": "🪟" },
+        { "id": "widgets", "title": "Виджеты",        "icon": "🧩" },
+        { "id": "mon",     "title": "Мониторинг",     "icon": "🌡" },
+        { "id": "wall",    "title": "Обои",           "icon": "🖼" },
+        { "id": "term",    "title": "Терминал",       "icon": "⌨" }
+    ],
+    "items": [
+        { "id": "sweet", "section": "themes", "name": "Sweet", "author": "EliverLara",
+          "description": "Тёмная тема с фиолетово-розовыми акцентами",
+          "packages": ["sweet-kde-theme-git"],
+          "apply": { "type": "lookandfeel", "value": "Sweet" },
+          "preview": { "gradient": ["#1b1530", "#c74ded"], "window": "#2a1d3a", "accent": "#c74ded" } },
+        { "id": "candy", "section": "icons", "name": "Candy", "author": "EliverLara",
+          "description": "Яркие иконки с градиентами",
+          "packages": ["candy-icons-git"],
+          "apply": { "type": "icons", "value": "candy-icons" },
+          "preview": { "dots": ["#ff6b9d", "#ffa94d", "#69db7c", "#4dabf7", "#b197fc"] } },
+        { "id": "bibata", "section": "cursors", "name": "Bibata", "author": "ful1e5",
+          "description": "Современные курсоры, светлые",
+          "packages": ["bibata-cursor-theme-bin"],
+          "apply": { "type": "cursor", "value": "Bibata-Modern-Ice" },
+          "preview": { "dots": ["#111111", "#ffffff", "#ffb000"] } },
+        { "id": "kzones", "section": "tiling", "name": "KZones — зоны на экране", "author": "gerritdevriese",
+          "description": "Перетащи окно — оно встанет в зону; удобно на широком мониторе",
+          "packages": ["kwin-scripts-kzones"],
+          "apply": { "type": "kwin-script", "value": "kzones" },
+          "preview": { "gradient": ["#1d3557", "#0b1020"], "window": "#141a2e", "accent": "#2f86f0" } }
+    ]
+}

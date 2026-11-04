@@ -1,0 +1,3 @@
+#!/bin/sh
+# Магазин AXON — проверенное оформление в один клик
+exec python3 /usr/lib/axon-store/axon_store/main.py "$@"

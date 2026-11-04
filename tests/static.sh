@@ -239,6 +239,31 @@ check "консоль: фон плотнее (Opacity 0.85)" grep -q "^Opacity=0
 check "sudo: точки при вводе пароля" grep -qx "Defaults pwfeedback" $BR/etc/sudoers.d/axon-pwfeedback
 check "sudo: файл sudoers ставится с правами 440" has packages/axon-branding/PKGBUILD "install -Dm440 .*etc/sudoers.d/axon-pwfeedback"
 
+# --- Магазин AXON ---
+SR=pkgsrc/axon-store
+check "магазин: юнит-тесты" python3 -m unittest tests/test_store.py
+check "магазин: python синтаксис" python3 -m py_compile $SR/usr/lib/axon-store/axon_store/main.py
+check "магазин: пакет" test -s packages/axon-store/PKGBUILD
+check "магазин: запуск 755" has packages/axon-store/PKGBUILD "install -Dm755 .*usr/bin/axon-store"
+check "магазин: в меню" has $SR/usr/share/applications/axon-store.desktop "Name=Магазин AXON"
+check "магазин: входит в комплект axon-desktop" has packages/axon-desktop/PKGBUILD "axon-store"
+check "магазин: CI собирает вещи из AUR" has ci/publish-build.sh "aur/store.txt"
+check "магазин: закрепление git-источника — тест" tests/test_aur_pin.sh
+store_pinned() {  # каждая вещь: имя + коммит AUR (40 hex); у *-git ещё коммит исходников
+    local name aur up
+    while read -r name aur up; do
+        [ -z "$name" ] && continue
+        [[ "$aur" =~ ^[0-9a-f]{40}$ ]] || { echo "$name: нет коммита AUR"; return 1; }
+        if [[ "$name" == *-git ]]; then [[ "$up" =~ ^[0-9a-f]{40}$ ]] || { echo "$name: нет коммита исходников"; return 1; }; fi
+    done < <(sed 's/#.*//' aur/store.txt | awk 'NF')
+}
+check "магазин: все вещи закреплены на коммитах" store_pinned
+check "магазин: build-aur закрепляет коммиты" has ci/build-aur.sh "aur-pin-source.sh"
+check "магазин: собранный пакет сразу ставится (для зависимых)" has ci/build-aur.sh "pacman -U --noconfirm --needed"
+check "магазин: AUR-пакеты подписываются" has ci/publish-build.sh "detach-sign"
+check "магазин: отладочные пакеты не публикуются" has ci/repo-add-channel.sh "debug"
+check "магазин: e2e проверяет вещи магазина" has repo-site/publish.yml "aur/store.txt"
+
 # --- устойчивость CI к сбоям зеркал Arch ---
 check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'
 for f in build.sh ci/greeter-shot.sh ci/publish-build.sh ci/publish-promote.sh ci/e2e-repo.sh; do

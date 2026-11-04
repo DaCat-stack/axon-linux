@@ -175,8 +175,9 @@ check "BIOS-меню: заставка AXON" png_size branding/syslinux-splash.p
 check "BIOS-меню: заставка подменяется при сборке" has build.sh "syslinux-splash.png"
 
 # --- без стандартного помощника KDE поверх нашего приветствия ---
-check "помощник KDE не запускается сам (live и установленная система)" has build.sh "NoExtract = etc/xdg/autostart/org.kde.plasma-welcome.desktop"
-check "правка pacman.conf на настоящем releng" tests/test_noextract.sh
+check "помощник KDE: «уже показан» для всех пользователей" has $BR/etc/xdg/plasma-welcomerc "LastSeenVersion="
+check "помощник KDE: без страницы после обновлений" has $BR/etc/xdg/plasma-welcomerc "ShowUpdatePage=false"
+check "CI: снимок рабочего стола после копирования в RAM" has ci/smoke-qemu.sh "run 6 uefi-menu 240 uefi-desktop"
 
 # --- исправления после ревью плана A ---
 for mp in /proc /sys /dev /run /run/udev /sys/firmware/efi/efivars; do

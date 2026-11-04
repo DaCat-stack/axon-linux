@@ -79,7 +79,7 @@ OVMF_CODE=$(ls /usr/share/OVMF/OVMF_CODE_4M.fd /usr/share/OVMF/OVMF_CODE.fd 2>/d
 OVMF_VARS=$(ls /usr/share/OVMF/OVMF_VARS_4M.fd /usr/share/OVMF/OVMF_VARS.fd 2>/dev/null | head -1)
 if [ -n "$OVMF_CODE" ] && [ -n "$OVMF_VARS" ]; then
     cp "$OVMF_VARS" /tmp/axon-ovmf-vars.fd
-    run 6 uefi-menu 150 uefi-desktop -m 8G \
+    run 6 uefi-menu 240 uefi-desktop -m 8G \
         -drive if=pflash,format=raw,readonly=on,file="$OVMF_CODE" \
         -drive if=pflash,format=raw,file=/tmp/axon-ovmf-vars.fd \
         -drive file="$ISO",format=raw,if=virtio,readonly=on

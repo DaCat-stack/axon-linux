@@ -1,0 +1,5 @@
+# AXON: у нас своё окно приветствия — стандартный помощник KDE не показываем.
+# Модуль kded plasma-welcome запускает его, если LastSeenVersion пуст, и после крупных обновлений.
+[General]
+LastSeenVersion=6.0.0
+ShowUpdatePage=false

@@ -24,6 +24,13 @@ class PresetsTest(unittest.TestCase):
         self.assertEqual(presets.apply_command("b"),
                          ["plasma-apply-lookandfeel", "--apply", "org.axon.desktop.b", "--resetLayout"])
 
+    def test_splash_off_after_apply(self):
+        # KDE при применении пресета пишет в kdedefaults Engine=KSplashQML — выключаем заставку у пользователя
+        self.assertEqual(presets.splash_off_commands(), [
+            ["kwriteconfig6", "--file", "ksplashrc", "--group", "KSplash", "--key", "Engine", "none"],
+            ["kwriteconfig6", "--file", "ksplashrc", "--group", "KSplash", "--key", "Theme", "None"],
+        ])
+
     def test_apply_command_unknown_id(self):
         with self.assertRaises(ValueError):
             presets.apply_command("x")

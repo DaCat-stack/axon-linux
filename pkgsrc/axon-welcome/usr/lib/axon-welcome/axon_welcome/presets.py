@@ -16,6 +16,12 @@ def apply_command(preset_id: str) -> list[str]:
     return ["plasma-apply-lookandfeel", "--apply", _BY_ID[preset_id]["package"], "--resetLayout"]
 
 
+def splash_off_commands() -> list[list[str]]:
+    """После применения пресета KDE включает заставку в ~/.config/kdedefaults — выключаем у пользователя."""
+    return [["kwriteconfig6", "--file", "ksplashrc", "--group", "KSplash", "--key", key, value]
+            for key, value in (("Engine", "none"), ("Theme", "None"))]
+
+
 def marker_path(home: Path) -> Path:
     return home / ".config" / "axon-welcome-done"
 

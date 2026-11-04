@@ -25,6 +25,8 @@ def main() -> int:
         @Slot(str)
         def apply(self, preset_id: str) -> None:
             subprocess.run(presets.apply_command(preset_id), check=False)
+            for cmd in presets.splash_off_commands():
+                subprocess.run(cmd, check=False)
             presets.mark_done(HOME)
             app.quit()
 

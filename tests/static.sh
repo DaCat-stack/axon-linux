@@ -225,13 +225,17 @@ check "иконка axon-logo в hicolor" png_size $BR/usr/share/icons/hicolor/2
 check "fastfetch: конфиг — валидный JSON" python3 -c "import json,re,sys; json.loads(re.sub(r'//.*','',open(sys.argv[1]).read()))" $BR/etc/xdg/fastfetch/config.jsonc
 
 # --- консоль «Стекло» и пароль sudo ---
-check "консоль: схема AXON — стекло (прозрачность + размытие)" sh -c 'grep -q "^Opacity=0.62" '$BR'/usr/share/konsole/AXON.colorscheme && grep -q "^Blur=true" '$BR'/usr/share/konsole/AXON.colorscheme'
+check "консоль: схема AXON — стекло (прозрачность + размытие)" sh -c 'grep -q "^Opacity=0.85" '$BR'/usr/share/konsole/AXON.colorscheme && grep -q "^Blur=true" '$BR'/usr/share/konsole/AXON.colorscheme'
 check "консоль: профиль AXON со схемой и шрифтом" sh -c 'grep -q "^ColorScheme=AXON" '$BR'/usr/share/konsole/AXON.profile && grep -q "^Font=JetBrains Mono" '$BR'/usr/share/konsole/AXON.profile'
 check "консоль: профиль AXON по умолчанию" has $BR/etc/xdg/konsolerc "DefaultProfile=AXON.profile"
 check "консоль: шрифт JetBrains Mono в зависимостях" has packages/axon-branding/PKGBUILD "ttf-jetbrains-mono"
 check "консоль: строка ввода fish" has $BR/etc/fish/functions/fish_prompt.fish "function fish_prompt"
 check "консоль: лого fastfetch из настоящей картинки (file-raw)" sh -c 'grep -q "\"file-raw\"" '$BR'/etc/xdg/fastfetch/config.jsonc && test -s '$BR'/usr/share/axon/fastfetch-logo.ansi'
 check "консоль: fastfetch показывает сведения о системе" has $BR/etc/xdg/fastfetch/config.jsonc '"modules"'
+check "консоль: без панелей инструментов (mainToolBar)" grep -q '<ToolBar name="mainToolBar" hidden="true"' $BR/usr/share/kxmlgui5/konsole/konsoleui.rc
+check "консоль: без панелей инструментов (sessionToolbar)" grep -q '<ToolBar name="sessionToolbar" hidden="true"' $BR/usr/share/kxmlgui5/konsole/sessionui.rc
+check "консоль: лого без цветного фона ячеек" sh -c '! grep -q "\[48;2" '$BR'/usr/share/axon/fastfetch-logo.ansi'
+check "консоль: фон плотнее (Opacity 0.85)" grep -q "^Opacity=0.85" $BR/usr/share/konsole/AXON.colorscheme
 check "sudo: точки при вводе пароля" grep -qx "Defaults pwfeedback" $BR/etc/sudoers.d/axon-pwfeedback
 check "sudo: файл sudoers ставится с правами 440" has packages/axon-branding/PKGBUILD "install -Dm440 .*etc/sudoers.d/axon-pwfeedback"
 

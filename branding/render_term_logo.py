@@ -30,13 +30,20 @@ def cells(width):
     return rows
 
 
+def mix(a, b):
+    return tuple((x + y) // 2 for x, y in zip(a[:3], b[:3]))
+
+
+# Только цвет символа, без цветного фона: Konsole делает прозрачным и фон ячеек,
+# из-за этого лого с фоном выглядело «в полоску». Обе половины есть — «█» средним цветом.
 def to_ansi(rows):
     out = []
     for row in rows:
         s = ""
         for top, bot in row:
             if top and bot:
-                s += f"\x1b[38;2;{top[0]};{top[1]};{top[2]}m\x1b[48;2;{bot[0]};{bot[1]};{bot[2]}m▀\x1b[0m"
+                c = mix(top, bot)
+                s += f"\x1b[38;2;{c[0]};{c[1]};{c[2]}m█\x1b[0m"
             elif top:
                 s += f"\x1b[38;2;{top[0]};{top[1]};{top[2]}m▀\x1b[0m"
             elif bot:
@@ -53,7 +60,7 @@ def to_html(rows):
         s = ""
         for top, bot in row:
             if top and bot:
-                s += f'<span style="color:rgb{top[:3]};background:rgb{bot[:3]}">▀</span>'
+                s += f'<span style="color:rgb{mix(top, bot)}">█</span>'
             elif top:
                 s += f'<span style="color:rgb{top[:3]}">▀</span>'
             elif bot:

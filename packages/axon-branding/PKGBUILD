@@ -7,7 +7,7 @@ arch=('any')
 url="https://axon-project.ru"
 license=('GPL-3.0-or-later')
 makedepends=('grub' 'inter-font' 'fontconfig')
-depends=('plymouth' 'sddm' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg' 'libnotify')
+depends=('plymouth' 'plasma-desktop' 'papirus-icon-theme' 'inter-font' 'qt6-svg' 'libnotify')
 backup=('etc/xdg/plasma-welcomerc' 'etc/xdg/kdeglobals' 'etc/xdg/kscreenlockerrc' 'etc/xdg/ksplashrc' 'etc/sddm.conf.d/10-axon-theme.conf')
 install=axon-branding.install
 

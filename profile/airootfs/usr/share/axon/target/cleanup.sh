@@ -12,6 +12,9 @@ rm -f /usr/local/bin/axon-install
 rm -f /etc/sddm.conf.d/zz-live.conf                       # автовход live; тема — в пакете axon-branding
 
 # --- ядро: archiso убирает его из /boot, берём из пакета linux ---
+# сначала выключаем сжатие btrfs для /boot, иначе GRUB не прочитает ядро
+sh "$T/boot-nocompress.sh" || exit 1
+rm -f /boot/vmlinuz-linux /boot/initramfs-linux*.img   # если уже записаны сжатыми — перепишутся ниже/в initcpio
 set -- /usr/lib/modules/*/vmlinuz
 [ "$#" -eq 1 ] || { echo "ожидалось одно ядро в /usr/lib/modules, найдено: $*" >&2; exit 1; }
 install -Dm644 "$1" /boot/vmlinuz-linux

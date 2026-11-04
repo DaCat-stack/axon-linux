@@ -197,6 +197,10 @@ check "fixA5: уведомление не в live" has $BR/usr/lib/systemd/user/
 check "fixA6: ошибка pacman-key --init останавливает установку" grep -qF "pacman-key --init || exit 1" $AIR/usr/share/axon/target/cleanup.sh
 check "fixA6: ошибка pacman-key --populate останавливает установку" grep -qF "pacman-key --populate archlinux axon || exit 1" $AIR/usr/share/axon/target/cleanup.sh
 
+# --- ядро на btrfs читается GRUB (без сжатия в /boot) ---
+check "boot: тест выключения сжатия /boot" tests/test_boot_nocompress.sh
+check "boot: cleanup выключает сжатие /boot ДО записи ядра" sh -c 'n1=$(grep -n "boot-nocompress.sh" profile/airootfs/usr/share/axon/target/cleanup.sh | head -1 | cut -d: -f1); n2=$(grep -n "install -Dm644 \"\$1\" /boot/vmlinuz-linux" profile/airootfs/usr/share/axon/target/cleanup.sh | cut -d: -f1); [ -n "$n1" ] && [ -n "$n2" ] && [ "$n1" -lt "$n2" ]'
+
 # --- устойчивость CI к сбоям зеркал Arch ---
 check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'
 for f in build.sh ci/greeter-shot.sh ci/publish-build.sh ci/publish-promote.sh ci/e2e-repo.sh; do

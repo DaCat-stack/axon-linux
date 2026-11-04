@@ -189,11 +189,11 @@ for mp in /proc /sys /dev /run /run/udev /sys/firmware/efi/efivars; do
     check "fixA1: mount.conf монтирует $mp в новую систему" yaml_has $CA/modules/mount.conf "mountPoint: *${mp}\$"
 done
 check "fixA1: mount.conf опции подкачки btrfs" has $CA/modules/mount.conf "btrfs_swap"
-check "fixA2: e2e пишет результат в свой файл" sh -c 'grep -q "e2e-testing.txt" .github/workflows/packages.yml && grep -q "OUT=\"\${3:?" ci/e2e-repo.sh'
-check "fixA2: проверка смотрит итог testing" has .github/workflows/packages.yml 'grep -q "^\$p " e2e-testing.txt'
+check "fixA2: e2e пишет результат в свой файл" sh -c 'grep -q "e2e-testing.txt" repo-site/publish.yml && grep -q "OUT=\"\${3:?" ci/e2e-repo.sh'
+check "fixA2: проверка смотрит итог testing" has repo-site/publish.yml 'grep -q "^\$p " e2e-testing.txt'
 check "fixA3: e2e записывает проверенную версию" has ci/e2e-repo.sh 'pacman -Q $pkg >'
 check "fixA3: в axon переносится ровно проверенная версия" has ci/publish-promote.sh 'read -r name ver'
-check "fixA4: публикация только с main" sh -c 'awk "/^on:/,/^concurrency:/" .github/workflows/packages.yml | grep -q "branches: \[main\]"'
+check "fixA4: публикация только из main" has repo-site/publish.yml "ref: main"
 check "fixA5: уведомление: тест" tests/test_update_age.sh
 check "fixA5: уведомление не в live" has $BR/usr/lib/systemd/user/axon-update-age.service "ConditionPathExists=!/run/archiso"
 check "fixA6: ошибка pacman-key --init останавливает установку" grep -qF "pacman-key --init || exit 1" $AIR/usr/share/axon/target/cleanup.sh
@@ -266,14 +266,18 @@ check "уведомление: скрипт с правами 755" has packages/
 check "уведомление: таймер включён для всех" has packages/axon-branding/PKGBUILD "timers.target.wants/axon-update-age.timer"
 check "уведомление: зависимость libnotify" has packages/axon-branding/PKGBUILD "libnotify"
 for f in ci/repo-add-channel.sh ci/publish-build.sh ci/publish-promote.sh ci/publish-deploy.sh ci/e2e-repo.sh; do check "$f исполняемый" test -x $f; done
-check "публикация: workflow пакетов" has .github/workflows/packages.yml "ci/e2e-repo.sh"
+check "публикация: workflow в axon-repo" has repo-site/publish.yml "ci/e2e-repo.sh"
+check "публикация: без SSH-ключей (встроенный токен axon-repo)" sh -c '! grep -q "DEPLOY_KEY" repo-site/publish.yml && grep -q "contents: write" repo-site/publish.yml'
+check "публикация: Pages пересобирается по API" has ci/publish-deploy.sh "pages/builds"
+check "публикация: опубликованный коммит запоминается" has repo-site/publish.yml "built-sha.txt"
+check "axon-linux: пакеты только собираются, без секретов" sh -c '! grep -q "secrets\." .github/workflows/packages.yml'
 check "ISO: в pacman.conf установленной системы есть [axon]" has build.sh "Server = https://dacat-stack.github.io/axon-repo/axon/"
 check "ISO: [axon] только с подписью" has build.sh "SigLevel = Required DatabaseRequired"
 check "live: ключ AXON при старте" has $AIR/etc/systemd/system/pacman-init.service.d/axon.conf "pacman-key --populate axon"
 check "установка: ключ AXON в связке" has $AIR/usr/share/axon/target/cleanup.sh "pacman-key --populate archlinux axon"
 check "комплект axon-desktop тянет все части" sh -c 'grep -q "axon-branding" packages/axon-desktop/PKGBUILD && grep -q "axon-welcome" packages/axon-desktop/PKGBUILD && grep -q "axon-keyring" packages/axon-desktop/PKGBUILD'
 check "в ISO стоит комплект axon-desktop" grep -qx axon-desktop profile/packages.x86_64
-check "e2e проверяет комплект" has .github/workflows/packages.yml "axon-desktop"
+check "e2e проверяет комплект" has repo-site/publish.yml "axon-desktop"
 check "ci/build-packages.sh существует" test -x ci/build-packages.sh
 check "build.sh собирает пакеты AXON" has build.sh "build-packages.sh"
 

@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
-# Включает графический режим и тему AXON в grub.cfg флешки (releng: «terminal_output console»).
+# Включает тему AXON в grub.cfg флешки — так, чтобы она НИКОГДА не мешала загрузке:
+# тема ищется по файлу (под Ventoy своя GRUB, переменные archiso могут быть пусты),
+# всё под условиями; не нашлась — остаётся обычное текстовое меню без ошибок.
 # Использование: ci/grub-theme-cfg.sh <grub.cfg>
 set -euo pipefail
 f="$1"
-awk '!done && /terminal_output console/ {
-        sub(/terminal_output console/, "insmod gfxterm\n    insmod png\n    loadfont (${ARCHISO_HINT})/boot/grub/themes/axon/inter-regular-14.pf2\n    loadfont (${ARCHISO_HINT})/boot/grub/themes/axon/inter-regular-16.pf2\n    loadfont (${ARCHISO_HINT})/boot/grub/themes/axon/inter-regular-20.pf2\n    loadfont (${ARCHISO_HINT})/boot/grub/themes/axon/inter-bold-20.pf2\n    terminal_output gfxterm\n    set theme=(${ARCHISO_HINT})/boot/grub/themes/axon/theme.txt")
-        done=1 }
-     { print }' "$f" > "$f.new"
+T='(${axon_dev})/boot/grub/themes/axon'
+block="search --no-floppy --set=axon_dev --file /boot/grub/themes/axon/theme.txt
+    if [ -n \"\${axon_dev}\" ]; then
+        if loadfont $T/inter-regular-14.pf2; then true; fi
+        if loadfont $T/inter-regular-16.pf2; then true; fi
+        if loadfont $T/inter-regular-20.pf2; then true; fi
+        if loadfont $T/inter-bold-20.pf2; then
+            insmod gfxterm
+            insmod png
+            terminal_output gfxterm
+            set theme=$T/theme.txt
+        fi
+    fi"
+B="$block" awk '!done && /terminal_output console/ { print; print "    " ENVIRON["B"]; done=1; next } { print }' "$f" > "$f.new"
 mv "$f.new" "$f"
-grep -q 'set theme=(${ARCHISO_HINT})/boot/grub/themes/axon/theme.txt' "$f"
+grep -q 'set theme=' "$f"

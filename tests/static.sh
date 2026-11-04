@@ -168,6 +168,9 @@ check "флешка: UEFI грузится через GRUB" has build.sh "uefi.s
 check "флешка: тема берётся из пакета axon-branding" has build.sh "usr/share/grub/themes/axon"
 check "флешка: графический режим и тема в grub.cfg" has build.sh "grub-theme-cfg.sh"
 check "флешка: правка grub.cfg на настоящем releng" tests/test_grub_theme_cfg.sh
+check "NVIDIA: драйвер в initramfs (ранний KMS для анимации)" has $AIR/etc/mkinitcpio.conf.d/axon-nvidia.conf "MODULES+=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)"
+check "флешка: пункт безопасного режима в сборке" has build.sh "grub-safe-entry.sh"
+check "флешка: в безопасный режим не добавляется splash" has build.sh "/nomodeset/!s/"
 check "CI: загрузка как с флешки (UEFI, диск, 8 ГБ)" has ci/smoke-qemu.sh "OVMF"
 check "CI: журнал гостя для разбора ошибок" has ci/smoke-qemu.sh "guest-exec"
 

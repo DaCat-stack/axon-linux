@@ -53,7 +53,7 @@ mv "$PROFILE/packages.tmp" "$PROFILE/packages.x86_64"
 # --- Анимация загрузки: хук plymouth в initramfs и «quiet splash» в меню загрузки ---
 "$ROOT/ci/add-plymouth-hook.sh" "$PROFILE/airootfs/etc/mkinitcpio.conf.d/archiso.conf"
 for f in "$PROFILE"/syslinux/*.cfg "$PROFILE"/grub/*.cfg "$PROFILE"/efiboot/loader/entries/*.conf; do
-    sed -i '/archisobasedir=/{/accessibility/!s/$/ quiet splash/}' "$f"
+    sed -i '/archisobasedir=/{/accessibility/!{/nomodeset/!s/$/ quiet splash/;};}' "$f"
 done
 
 # --- Меню флешки: в UEFI вместо текстового systemd-boot — GRUB с темой AXON ---
@@ -70,6 +70,7 @@ cp "$PROFILE/grub/themes/axon/icons/axon.png" "$PROFILE/grub/themes/axon/icons/a
 cp "$PROFILE/grub/themes/axon/icons/efi.png" "$PROFILE/grub/themes/axon/icons/uefi-firmware.png"
 # графический режим + тема (в releng там «terminal_output console»)
 "$ROOT/ci/grub-theme-cfg.sh" "$PROFILE/grub/grub.cfg"
+"$ROOT/ci/grub-safe-entry.sh" "$PROFILE/grub/grub.cfg"
 
 # заставка текстового меню BIOS (syslinux): AXON вместо Arch
 cp "$ROOT/branding/syslinux-splash.png" "$PROFILE/syslinux/splash.png"

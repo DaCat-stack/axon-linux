@@ -71,6 +71,8 @@ for f in metadata.desktop theme.conf Main.qml TopBar.qml LoginCard.qml PowerBar.
     check "sddm: $f" test -s "$ST/$f"
 done
 check "sddm: Qt6" has $ST/metadata.desktop "QtVersion=6"
+check "sddm: размер из theme.conf (uiScale)" has $ST/Main.qml "config.uiScale"
+check "sddm: размер 0.7 (владелец одобрил 04.11)" has $ST/theme.conf "uiScale=0.7"
 check "sddm: MainScript" has $ST/metadata.desktop "MainScript=Main.qml"
 check "sddm: карточка только на основном экране" has $ST/Main.qml "primaryScreen"
 check "sddm: «Введите пароль»" has $ST/LoginCard.qml "Введите пароль"

@@ -8,8 +8,8 @@ Item {
     width: 1920
     height: 1080
 
-    // 1 px макета (экран 1200×675) → px этого экрана
-    readonly property real s: height / 675
+    // 1 px макета (экран 1200×675) → px этого экрана, × uiScale из theme.conf (0.7 — одобрено на 1920×1080)
+    readonly property real s: height / 675 * (Number(config.uiScale) > 0 ? Number(config.uiScale) : 0.7)
     readonly property string fontFamily: config.font || "Inter"
 
     Image {

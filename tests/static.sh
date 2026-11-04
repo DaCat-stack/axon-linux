@@ -174,6 +174,10 @@ check "CI: журнал гостя для разбора ошибок" has ci/sm
 check "BIOS-меню: заставка AXON" png_size branding/syslinux-splash.png 640 480
 check "BIOS-меню: заставка подменяется при сборке" has build.sh "syslinux-splash.png"
 
+# --- без стандартного помощника KDE поверх нашего приветствия ---
+check "помощник KDE не запускается сам (live и установленная система)" has build.sh "NoExtract = etc/xdg/autostart/org.kde.plasma-welcome.desktop"
+check "правка pacman.conf на настоящем releng" tests/test_noextract.sh
+
 # --- устойчивость CI к сбоям зеркал Arch ---
 check "CI: список зеркал с запасными" sh -c 'test "$(grep -c "^Server" ci/use-mirrors.sh)" -ge 4'
 for f in build.sh ci/greeter-shot.sh ci/publish-build.sh ci/publish-promote.sh ci/e2e-repo.sh; do

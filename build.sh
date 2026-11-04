@@ -23,6 +23,8 @@ rm -rf "$PROFILE/airootfs/etc/systemd/system/getty@tty1.service.d"
 
 # --- multilib (нужен для Steam и 32-битного Wine) ---
 sed -i '/^#\[multilib\]/,/^#Include/ s/^#//' "$PROFILE/pacman.conf"
+# NoExtract = etc/xdg/autostart/org.kde.plasma-welcome.desktop — у AXON своё приветствие
+"$ROOT/ci/pacman-noextract.sh" "$PROFILE/pacman.conf"
 cp "$PROFILE/pacman.conf" "$PROFILE/airootfs/etc/pacman.conf"
 
 # --- Репозиторий AXON для live и установленной системы (только подписанные пакеты) ---
